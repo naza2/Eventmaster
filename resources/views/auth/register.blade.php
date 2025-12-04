@@ -62,14 +62,14 @@
                     <div class="mb-8 flex items-center">
                         <input type="checkbox" id="terms" name="terms" required class="h-5 w-5 text-purple-600 rounded focus:ring-purple-500">
                         <label for="terms" class="ml-3 text-sm text-gray-600">
-                            Acepto los <a href="#" class="text-purple-600 font-semibold hover:underline">términos y condiciones</a> y la <a href="#" class="text-purple-600 font-semibold hover:underline">política de privacidad</a>
+                            Acepto los términos y condiciones
                         </label>
                     </div>
 
                     <!-- Botón -->
                     <button type="submit"
-                            class="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-4 rounded-xl hover:from-purple-700 hover:to-blue-700 transform hover:scale-105 transition duration-300 shadow-lg text-lg">
-                        Crear cuenta
+                            class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-4 rounded-full transition shadow-lg text-lg">
+                        Crear Cuenta
                     </button>
 
                     <!-- Ya tienes cuenta -->

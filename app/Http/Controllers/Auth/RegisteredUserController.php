@@ -31,20 +31,26 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'lastname' => ['nullable', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
+        $fullName = $request->name . ($request->lastname ? ' ' . $request->lastname : '');
+
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
+            'name' => $fullName,
+            'email' => strtolower($request->email),
             'password' => Hash::make($request->password),
         ]);
+
+        // Asignar rol de participante por defecto
+        $user->assignRole('participante');
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect(route('eventos.index', absolute: false));
     }
 }

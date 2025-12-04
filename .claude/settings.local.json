@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(test:*)",
+      "Bash(findstr:*)",
+      "Bash(php artisan make:seeder:*)",
+      "Bash(php artisan:*)",
+      "Bash(for file in \"D:/eventmaster/eventmaster/resources/views/eventos/show.blade.php\" \"D:/eventmaster/eventmaster/resources/views/equipos/show.blade.php\" \"D:/eventmaster/eventmaster/resources/views/equipos/create.blade.php\")",
+      "Bash(do sed -i \"s/@extends(''layouts\\.app'')/@extends(''layouts.master'')/g\" \"$file\")",
+      "Bash(done)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
