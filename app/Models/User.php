@@ -8,13 +8,21 @@ use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @method bool hasRole($roles, string $guard = null)
+ * @method bool hasAnyRole($roles, string $guard = null)
+ * @method $this assignRole(...$roles)
+ * @method $this syncRoles(...$roles)
+ * @method $this removeRole($role)
+ */
 class User extends Authenticatable
 {
     use Notifiable, HasRoles;
 
     protected $fillable = [
         'name', 'email', 'password', 'matricula', 'carrera_id',
-        'telefono', 'fecha_nacimiento', 'sexo', 'foto_perfil', 'verificado'
+        'telefono', 'fecha_nacimiento', 'sexo', 'foto_perfil', 'verificado',
+        'especialidad'
     ];
 
     protected $hidden = ['password', 'remember_token'];
@@ -56,6 +64,36 @@ class User extends Authenticatable
     public function jueces(): HasMany
     {
         return $this->hasMany(Juez::class);
+    }
+
+    public function invitacionesRecibidas(): HasMany
+    {
+        return $this->hasMany(Invitacion::class, 'invitado_id');
+    }
+
+    public function invitacionesEnviadas(): HasMany
+    {
+        return $this->hasMany(Invitacion::class, 'invitado_por');
+    }
+
+    public function invitacionesPendientes(): HasMany
+    {
+        return $this->invitacionesRecibidas()->where('estado', 'pendiente');
+    }
+
+    public function esLiderDeEquipo(): bool
+    {
+        return $this->hasRole('lider_equipo');
+    }
+
+    public function esJuez(): bool
+    {
+        return $this->hasRole('juez');
+    }
+
+    public function esAdmin(): bool
+    {
+        return $this->hasRole('administrador');
     }
 
     protected function casts(): array

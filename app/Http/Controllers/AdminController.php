@@ -42,6 +42,42 @@ public function update(Request $request, User $usuario)
         return view('admin.usuarios.index', compact('usuarios'));
     }
 
+    public function usuariosCreate()
+    {
+        $roles = Role::all();
+        $carreras = \App\Models\Carrera::all();
+        return view('admin.usuarios.create', compact('roles', 'carreras'));
+    }
+
+    public function usuariosStore(Request $request)
+    {
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:8|confirmed',
+            'matricula' => 'nullable|string|max:20|unique:users,matricula',
+            'telefono' => 'nullable|string|max:20',
+            'carrera_id' => 'required|exists:carreras,id',
+            'roles' => 'required|array|min:1',
+            'roles.*' => 'string|exists:roles,name',
+        ]);
+
+        $usuario = User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => bcrypt($data['password']),
+            'matricula' => $data['matricula'] ?? null,
+            'telefono' => $data['telefono'] ?? null,
+            'carrera_id' => $data['carrera_id'],
+        ]);
+
+        // Asignar roles
+        $usuario->syncRoles($data['roles']);
+
+        return redirect()->route('admin.usuarios.index')
+            ->with('success', 'Usuario creado correctamente');
+    }
+
     public function usuariosShow(User $usuario)
     {
         $usuario->load('roles', 'carrera', 'participantes.equipo.evento');

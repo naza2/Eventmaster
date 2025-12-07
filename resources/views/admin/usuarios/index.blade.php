@@ -7,8 +7,11 @@
     <div class="max-w-7xl mx-auto px-6">
         <div class="mb-8 flex items-center justify-between">
             <h1 class="text-4xl font-black text-gray-900">Gestión de Usuarios</h1>
-            <a href="{{ route('admin.usuarios.index') }}" class="px-6 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700">
-                ← Volver
+            <a href="{{ route('admin.usuarios.create') }}" class="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold rounded-xl shadow-lg transition transform hover:scale-105 flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+                Crear Usuario
             </a>
         </div>
 

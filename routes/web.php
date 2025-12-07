@@ -13,6 +13,8 @@ use App\Http\Controllers\CalificacionController;
 use App\Http\Controllers\GanadorController;
 use App\Http\Controllers\ConstanciaController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\InvitacionController;
+use App\Http\Controllers\EspecialidadController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -52,6 +54,34 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    /*
+    |--------------------------------------------------------------------------
+    | SELECCIÓN DE ESPECIALIDAD (JUECES)
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/especialidad/seleccionar', [EspecialidadController::class, 'select'])
+        ->name('especialidad.select');
+    Route::post('/especialidad/guardar', [EspecialidadController::class, 'store'])
+        ->name('especialidad.store');
+
+    /*
+    |--------------------------------------------------------------------------
+    | INVITACIONES
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/invitaciones', [InvitacionController::class, 'index'])
+        ->name('invitaciones.index');
+    Route::get('/equipos/{equipo}/invitar', [InvitacionController::class, 'create'])
+        ->name('equipos.invitar')
+        ->middleware('permission:invite-members');
+    Route::post('/equipos/{equipo}/invitar', [InvitacionController::class, 'enviar'])
+        ->name('invitaciones.enviar')
+        ->middleware('permission:invite-members');
+    Route::post('/invitaciones/{invitacion}/aceptar', [InvitacionController::class, 'aceptar'])
+        ->name('invitaciones.aceptar');
+    Route::post('/invitaciones/{invitacion}/rechazar', [InvitacionController::class, 'rechazar'])
+        ->name('invitaciones.rechazar');
 
     /*
     |--------------------------------------------------------------------------
@@ -136,6 +166,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::middleware(['auth', 'verified', 'role:administrador'])->prefix('admin')->name('admin.')->group(function () {
     // Gestión de usuarios
     Route::get('/usuarios', [AdminController::class, 'usuariosIndex'])->name('usuarios.index');
+    Route::get('/usuarios/crear', [AdminController::class, 'usuariosCreate'])->name('usuarios.create');
+    Route::post('/usuarios', [AdminController::class, 'usuariosStore'])->name('usuarios.store');
     Route::get('/usuarios/{usuario}', [AdminController::class, 'usuariosShow'])->name('usuarios.show');
     Route::get('/usuarios/{usuario}/editar', [AdminController::class, 'usuariosEdit'])->name('usuarios.edit');
     Route::patch('/usuarios/{usuario}', [AdminController::class, 'usuariosUpdate'])->name('usuarios.update');
