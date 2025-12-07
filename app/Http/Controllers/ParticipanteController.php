@@ -37,4 +37,41 @@ class ParticipanteController extends Controller
         return redirect()->route('equipos.show', $equipo)
                         ->with('success', '¡Miembro invitado correctamente!');
     }
+
+    public function destroy(Equipo $equipo, User $user)
+    {
+        $this->authorize('update', $equipo);
+
+        $participante = $equipo->participantes()->where('user_id', $user->getKey())->firstOrFail();
+        $participante->delete();
+
+        return redirect()->route('equipos.show', $equipo)
+                        ->with('success', '¡Miembro eliminado correctamente!');
+    }
+    
+    public function update(Request $request, User $usuario)
+    {
+        $request->validate([
+            'name'      => 'required|string|max:255',
+            'email'     => 'required|email|unique:users,email,' . $usuario->id,
+            'matricula' => 'nullable|string|max:20|unique:users,matricula,' . $usuario->id,
+            'telefono'  => 'nullable|string|max:20',
+            'carrera'   => 'nullable|string|max:100',
+            'role'      => 'required|string|exists:roles,name',
+        ]);
+
+        $usuario->update([
+            'name'      => $request->name,
+            'email'     => $request->email,
+            'matricula' => $request->filled('matricula') ? $request->matricula : null,
+            'telefono'  => $request->filled('telefono') ? $request->telefono : null,
+            'carrera'   => $request->filled('carrera') ? $request->carrera : null,
+        ]);
+
+        // Asignar rol único
+        $usuario->syncRoles($request->role);
+
+        return redirect()->route('admin.usuarios.show', $usuario)
+                        ->with('success', 'Usuario actualizado correctamente');
+    }
 }
