@@ -74,4 +74,5 @@ class ParticipanteController extends Controller
         return redirect()->route('admin.usuarios.show', $usuario)
                         ->with('success', 'Usuario actualizado correctamente');
     }
+    
 }

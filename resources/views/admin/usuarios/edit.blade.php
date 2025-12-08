@@ -4,46 +4,40 @@
 @section('title', 'Editar Usuario - ' . $usuario->name)
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 py-16">
-    <div class="max-w-5xl mx-auto px-6">
+<div class="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 py-12">
+    <div class="max-w-4xl mx-auto px-6">
 
-        <!-- Header Premium -->
-        <div class="text-center mb-16">
-            <h1 class="text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 mb-6">
+        <!-- Header compacto -->
+        <div class="flex items-center justify-between mb-10">
+            <h1 class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">
                 Editar Usuario
             </h1>
-            <p class="text-2xl text-gray-700 font-medium">
-                Modifica toda la información del usuario con control total
-            </p>
-        </div>
 
-        <!-- Botón volver -->
-        <div class="mb-10">
             <a href="{{ route('admin.usuarios.show', $usuario) }}"
-               class="inline-flex items-center gap-4 px-8 py-4 bg-white/80 backdrop-blur-xl text-indigo-600 font-black text-xl rounded-3xl hover:bg-indigo-50 transition transform hover:-translate-x-2 shadow-lg">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+               class="inline-flex items-center gap-3 px-6 py-3 bg-white/80 backdrop-blur-xl text-indigo-600 font-bold text-lg rounded-2xl hover:bg-indigo-50 transition shadow-lg">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                 </svg>
-                Volver al perfil
+                Volver
             </a>
         </div>
 
-        <!-- Card Premium -->
+        <!-- Card principal -->
         <div class="bg-white/90 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/30 overflow-hidden">
-            <div class="p-10 lg:p-12">
+            <div class="p-8 lg:p-10">
 
                 <!-- Mensajes de error -->
                 @if($errors->any())
-                    <div class="mb-8 bg-gradient-to-r from-red-100 to-rose-100 border-l-8 border-red-500 rounded-2xl p-6 shadow-lg">
+                    <div class="mb-8 bg-red-50 border border-red-200 rounded-2xl p-5 shadow-lg">
                         <div class="flex items-center gap-4">
-                            <svg class="w-10 h-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
                             </svg>
                             <div>
-                                <p class="text-xl font-black text-red-800 mb-3">Errores encontrados:</p>
-                                <ul class="list-disc pl-6 space-y-2 text-red-700 font-medium">
+                                <p class="font-black text-red-800">Errores encontrados:</p>
+                                <ul class="mt-2 space-y-1 text-red-700">
                                     @foreach($errors->all() as $error)
-                                        <li>{{ $error }}</li>
+                                        <li>• {{ $error }}</li>
                                     @endforeach
                                 </ul>
                             </div>
@@ -51,74 +45,125 @@
                     </div>
                 @endif
 
-                <form action="{{ route('admin.usuarios.update', $usuario) }}" method="POST" enctype="multipart/form-data" class="space-y-10">
+                <form action="{{ route('admin.usuarios.update', $usuario) }}" method="POST" enctype="multipart/form-data" class="space-y-8">
                     @csrf
                     @method('PATCH')
 
-                    <!-- Foto de perfil + Info básica -->
-                    <div class="grid lg:grid-cols-3 gap-10">
-                        <!-- Foto -->
-                        <div class="text-center">
-                            <div class="relative inline-block">
-                                <img src="{{ $usuario->foto_perfil ? Storage::url($usuario->foto_perfil) : asset('images/avatar.svg') }}"
-                                     alt="{{ $usuario->name }}"
-                                     class="w-48 h-48 rounded-3xl object-cover shadow-2xl ring-8 ring-purple-100">
-                                
-                                <label class="absolute bottom-0 right-0 bg-gradient-to-br from-purple-600 to-pink-600 text-white p-4 rounded-2xl shadow-xl cursor-pointer hover:shadow-2xl transition transform hover:scale-110">
-                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                    </svg>
-                                    <input type="file" name="foto_perfil" accept="image/*" class="hidden">
-                                </label>
+                    <!-- Foto + Datos básicos -->
+                    <div class="grid lg:grid-cols-3 gap-8 items-start">
+                        <!-- Foto de perfil -->
+                        <!-- Foto de perfil - Versión COMPACTA y ELEGANTE -->
+                <div class="mb-10">
+                    <h3 class="text-xl font-black text-gray-900 mb-6 text-center">
+                        Foto de perfil <span class="text-gray-500 font-normal">(opcional)</span>
+                    </h3>
+
+                    <div x-data="{ 
+                        preview: '{{ old('foto_perfil', $usuario->foto_perfil ?? '') }}',
+                        hasPreview: function() { return this.preview !== '' }
+                    }" class="max-w-md mx-auto">
+
+                        <!-- Vista previa pequeña y bonita -->
+                        <div class="flex justify-center mb-6">
+                            <div class="relative">
+                                <div class="w-32 h-32 rounded-2xl overflow-hidden shadow-xl ring-8 ring-purple-100 bg-gradient-to-br from-purple-200 to-pink-200">
+                                    <template x-if="preview">
+                                        <img :src="preview" alt="Vista previa" class="w-full h-full object-cover">
+                                    </template>
+                                    <template x-if="!preview">
+                                        <div class="w-full h-full flex items-center justify-center">
+                                            <svg class="w-16 h-16 text-white opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                            </svg>
+                                        </div>
+                                    </template>
+                                </div>
+
+                                <!-- Indicador de foto cargada -->
+                                <div x-show="preview" class="absolute -bottom-2 -right-2">
+                                    <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center shadow-lg">
+                                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+                                        </svg>
+                                    </div>
+                                </div>
                             </div>
-                            <p class="mt-4 text-lg font-bold text-gray-700">{{ $usuario->name }}</p>
-                            <p class="text-gray-500">{{ $usuario->email }}</p>
                         </div>
 
-                        <!-- Datos personales -->
-                        <div class="lg:col-span-2 space-y-8">
+                        <!-- Opciones compactas en fila -->
+                        <div class="grid grid-cols-2 gap-4">
+
+                            <!-- Subir archivo -->
+                            <label class="cursor-pointer">
+                                <input type="file"
+                                    name="foto_perfil"
+                                    accept="image/*"
+                                    class="hidden"
+                                    @change="let file = $event.target.files[0];
+                                                if(file){
+                                                    let reader = new FileReader();
+                                                    reader.onload = (e) => preview = e.target.result;
+                                                    reader.readAsDataURL(file);
+                                                }">
+                                <div class="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold py-4 px-6 rounded-2xl text-center transition transform hover:scale-105 shadow-lg">
+                                    Subir foto
+                                </div>
+                            </label>
+
+                            <!-- Pegar URL -->
+                            <div class="relative">
+                                <input type="url"
+                                    name="foto_url"
+                                    placeholder="o pega un enlace"
+                                    class="w-full pl-12 pr-4 py-4 text-sm rounded-2xl border-2 border-gray-200 focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition"
+                                    @input.debounce.500ms="preview = $event.target.value"
+                                    value="{{ old('foto_url') }}">
+
+                                <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4 1.414 1.414L9.172 12 5.586 8.414 7 7l4 4 4-4 1.414 1.414-4 4z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21.414l-6.414-6.414L7 13.586 12 18.586l5-5L18.414 15l-6.414 6.414z"/>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Nota pequeña -->
+                        <p class="text-center mt-4 text-xs text-gray-500">
+                            JPG, PNG, WebP • Máx 5MB • Cuadrada recomendada
+                        </p>
+                    </div>
+                </div>
+
+                        <!-- Formulario -->
+                        <div class="lg:col-span-2 space-y-6">
                             <div class="grid md:grid-cols-2 gap-6">
                                 <div>
-                                    <label class="block text-lg font-bold text-gray-800 mb-3">Nombre completo</label>
+                                    <label class="block text-base font-bold text-gray-800 mb-2">Nombre completo</label>
                                     <input type="text" name="name" value="{{ old('name', $usuario->name) }}" required
-                                           class="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 shadow-lg transition">
+                                           class="w-full px-5 py-3 text-base border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition">
                                 </div>
 
                                 <div>
-                                    <label class="block text-lg font-bold text-gray-800 mb-3">Email</label>
+                                    <label class="block text-base font-bold text-gray-800 mb-2">Email</label>
                                     <input type="email" name="email" value="{{ old('email', $usuario->email) }}" required
-                                           class="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 shadow-lg transition">
+                                           class="w-full px-5 py-3 text-base border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition">
                                 </div>
-                            </div>
 
-                            <div class="grid md:grid-cols-3 gap-6">
                                 <div>
-                                    <label class="block text-lg font-bold text-gray-800 mb-3">Matrícula</label>
+                                    <label class="block text-base font-bold text-gray-800 mb-2">Matrícula</label>
                                     <input type="text" name="matricula" value="{{ old('matricula', $usuario->matricula) }}"
-                                           class="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 shadow-lg transition"
-                                           placeholder="201900123">
+                                           class="w-full px-5 py-3 text-base border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition">
                                 </div>
 
                                 <div>
-                                    <label class="block text-lg font-bold text-gray-800 mb-3">Teléfono</label>
+                                    <label class="block text-base font-bold text-gray-800 mb-2">Teléfono</label>
                                     <input type="tel" name="telefono" value="{{ old('telefono', $usuario->telefono) }}"
-                                           class="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 shadow-lg transition"
-                                           placeholder="809-555-1234">
+                                           class="w-full px-5 py-3 text-base border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition">
                                 </div>
 
                                 <div>
-                                    <label class="block text-lg font-bold text-gray-800 mb-3">Fecha de nacimiento</label>
-                                    <input type="date" name="fecha_nacimiento" value="{{ old('fecha_nacimiento', $usuario->fecha_nacimiento?->format('Y-m-d')) }}"
-                                           class="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 shadow-lg transition">
-                                </div>
-                            </div>
-
-                            <div class="grid md:grid-cols-2 gap-6">
-                                <div>
-                                    <label class="block text-lg font-bold text-gray-800 mb-3">Carrera</label>
-                                    <select name="carrera_id" class="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 shadow-lg transition">
-                                        <option value="">Seleccionar carrera...</option>
+                                    <label class="block text-base font-bold text-gray-800 mb-2">Carrera</label>
+                                    <select name="carrera_id" class="w-full px-5 py-3 text-base border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition">
+                                        <option value="">Seleccionar...</option>
                                         @foreach(\App\Models\Carrera::orderBy('nombre')->get() as $carrera)
                                             <option value="{{ $carrera->id }}" {{ old('carrera_id', $usuario->carrera_id) == $carrera->id ? 'selected' : '' }}>
                                                 {{ $carrera->nombre }}
@@ -128,8 +173,8 @@
                                 </div>
 
                                 <div>
-                                    <label class="block text-lg font-bold text-gray-800 mb-3">Género</label>
-                                    <select name="sexo" class="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 shadow-lg transition">
+                                    <label class="block text-base font-bold text-gray-800 mb-2">Género</label>
+                                    <select name="sexo" class="w-full px-5 py-3 text-base border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition">
                                         <option value="">Seleccionar...</option>
                                         <option value="M" {{ old('sexo', $usuario->sexo) === 'M' ? 'selected' : '' }}>Masculino</option>
                                         <option value="F" {{ old('sexo', $usuario->sexo) === 'F' ? 'selected' : '' }}>Femenino</option>
@@ -137,34 +182,46 @@
                                     </select>
                                 </div>
                             </div>
+
+                            <div>
+                                <label class="block text-base font-bold text-gray-800 mb-2">Fecha de nacimiento</label>
+                                <input type="date" name="fecha_nacimiento" value="{{ old('fecha_nacimiento', $usuario->fecha_nacimiento?->format('Y-m-d')) }}"
+                                       class="w-full px-5 py-3 text-base border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition">
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Rol (más elegante) -->
-                    <div class="mt-12 p-8 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-3xl">
-                        <h3 class="text-2xl font-black text-gray-900 mb-6">Rol en la plataforma</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 gap-6">
+                    <!-- Roles Premium - Versión MÁS PEQUEÑA -->
+                    <div class="mt-8 p-6 bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl border-2 border-purple-200">
+                        <h3 class="text-xl font-black text-gray-900 mb-5 text-center">Asignar Roles</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             @foreach($roles as $role)
-                                <label class="relative flex items-center p-6 bg-white rounded-2xl shadow-lg hover:shadow-xl cursor-pointer transition transform hover:-translate-y-1
-                                    {{ $usuario->hasRole($role->name) ? 'ring-translate-y-1 ring-4 ring-purple-300' : '' }}">
-                                    <input type="radio"
-                                           name="role"
-                                           value="{{ $role->name }}"
-                                           {{ $usuario->hasRole($role->name) ? 'checked' : '' }}
-                                           class="sr-only"
-                                           required>
-                                    <div class="flex-1">
-                                        <p class="text-xl font-black text-gray-900">
-                                            {{ ucfirst(str_replace('_', ' ', $role->name)) }}
-                                        </p>
-                                        <p class="text-sm text-gray-600 mt-1">
-                                            {{ $role->name === 'administrador' ? 'Acceso total' : 'Acceso limitado' }}
-                                        </p>
+                                <label class="relative flex flex-col items-center p-4 bg-white rounded-2xl shadow-lg cursor-pointer hover:shadow-xl transition transform hover:-translate-y-1
+                                    {{ in_array($role->name, old('roles', [])) ? 'ring-3 ring-purple-400 bg-purple-50' : 'ring-1 ring-gray-200' }}">
+                                    <input type="checkbox"
+                                        name="roles[]"
+                                        value="{{ $role->name }}"
+                                        class="sr-only"
+                                        {{ in_array($role->name, old('roles', [])) ? 'checked' : '' }}>
+                                    
+                                    <div class="text-4xl mb-3">
+                                        @if($role->name === 'administrador') 
+                                            <svg class="w-10 h-10 text-purple-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                                        @elseif($role->name === 'participante')
+                                            <svg class="w-10 h-10 text-emerald-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z M12 14l6.16-3.422A12.083 12.083 0 0112 21.5c-2.4 0-4.6-.7-6.5-2.1L12 14z"/></svg>
+                                        @else
+                                            <svg class="w-10 h-10 text-gray-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+                                        @endif
                                     </div>
-                                    <div class="w-8 h-8 rounded-full border-4 border-gray-300 group-hover:border-purple-500 transition
-                                        {{ $usuario->hasRole($role->name) ? 'bg-purple-600 border-purple-600' : '' }}">
+                                    
+                                    <p class="text-base font-black text-gray-900">
+                                        {{ ucfirst(str_replace('_', ' ', $role->name)) }}
+                                    </p>
+                                    
+                                    <div class="mt-3 w-8 h-8 rounded-full border-3 border-gray-300 transition
+                                        {{ in_array($role->name, old('roles', [])) ? 'bg-purple-600 border-purple-600' : '' }}">
                                         <div class="w-full h-full rounded-full scale-0 bg-white transition-transform duration-300
-                                            {{ $usuario->hasRole($role->name) ? 'scale-100' : '' }}"></div>
+                                            {{ in_array($role->name, old('roles', [])) ? 'scale-100' : '' }}"></div>
                                     </div>
                                 </label>
                             @endforeach
@@ -172,29 +229,39 @@
                     </div>
 
                     <!-- Verificado -->
-                    <div class="mt-10">
+                    <div class="mt-8">
                         <label class="inline-flex items-center cursor-pointer">
                             <input type="checkbox" name="verificado" value="1"
                                    {{ old('verificado', $usuario->verificado) ? 'checked' : '' }}
-                                   class="w-8 h-8 text-purple-600 rounded-lg focus:ring-purple-500">
-                            <span class="ml-4 text-xl font-bold text-gray-800">
-                                Usuario verificado (correo confirmado + datos completos)
+                                   class="w-6 h-6 text-purple-600 rounded focus:ring-purple-500">
+                            <span class="ml-3 text-base font-bold text-gray-800">
+                                Usuario verificado
                             </span>
                         </label>
                     </div>
 
-                    <!-- Botones finales -->
-                    <div class="pt-12 border-t-4 border-purple-200 flex flex-col lg:flex-row gap-6">
+                    <!-- Botones finales pequeños -->
+                    <div class="pt-8 flex flex-col sm:flex-row gap-4">
                         <button type="submit"
-                                class="flex-1 px-10 py-10 py-6 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-black text-2xl rounded-3xl shadow-2xl hover:shadow-indigo-500/50 transform hover:-translate-y-2 transition-all duration-300 flex items-center justify-center gap-4 group">
-                            Guardar todos los cambios
-                            <svg class="w-10 h-10 group-hover:translate-x-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                class="flex-1 px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 
+                                       hover:from-purple-700 hover:to-pink-700 
+                                       text-white font-bold text-lg rounded-2xl 
+                                       shadow-xl hover:shadow-purple-500/50 
+                                       transform hover:-translate-y-1 
+                                       transition-all duration-300 
+                                       flex items-center justify-center gap-3 group">
+                            Guardar cambios
+                            <svg class="w-6 h-6 group-hover:translate-x-2 transition-transform" 
+                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
                             </svg>
                         </button>
 
                         <a href="{{ route('admin.usuarios.show', $usuario) }}"
-                           class="flex-1 px-10 py-6 bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800 font-black text-2xl rounded-3xl text-center hover:from-gray-300 hover:to-gray-400 transition transform hover:scale-105 shadow-lg">
+                           class="flex-1 px-8 py-4 bg-gray-200 hover:bg-gray-300 
+                                  text-gray-800 font-bold text-lg rounded-2xl 
+                                  text-center shadow-lg hover:shadow-xl 
+                                  transition transform hover:scale-105">
                             Cancelar
                         </a>
                     </div>

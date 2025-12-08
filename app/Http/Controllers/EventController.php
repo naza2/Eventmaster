@@ -9,11 +9,25 @@ use Illuminate\Support\Facades\Storage;
 
 class EventController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $eventos = Evento::withCount('equipos')
-                       ->orderByDesc('fecha_inicio')
-                       ->paginate(12);
+        $query = Evento::query();
+
+        // Filtro por estado
+        if ($request->filled('estado') && in_array($request->estado, ['inscripcion', 'en_curso', 'finalizado'])) {
+            $query->where('estado', $request->estado);
+        }
+
+        // Búsqueda por nombre
+        if ($request->filled('search')) {
+            $query->where('nombre', 'like', '%' . trim($request->search) . '%');
+        }
+
+        // Cargar conteo de equipos + ordenar por más reciente
+        $eventos = $query->withCount('equipos')
+                        ->latest('fecha_inicio')
+                        ->paginate(12)
+                        ->withQueryString(); // ¡¡ESTO ES CLAVE!!
 
         return view('eventos.index', compact('eventos'));
     }
