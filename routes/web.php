@@ -13,11 +13,8 @@ use App\Http\Controllers\CalificacionController;
 use App\Http\Controllers\GanadorController;
 use App\Http\Controllers\ConstanciaController;
 use App\Http\Controllers\AdminController;
-<<<<<<< HEAD
 use App\Http\Controllers\InvitacionController;
 use App\Http\Controllers\EspecialidadController;
-=======
->>>>>>> 952eaa0e88cd2a848c95971393bb77e190f53807
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -60,7 +57,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-<<<<<<< HEAD
     | SELECCIÓN DE ESPECIALIDAD (JUECES)
     |--------------------------------------------------------------------------
     */
@@ -89,8 +85,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-=======
->>>>>>> 952eaa0e88cd2a848c95971393bb77e190f53807
     | EVENTOS (públicos para todos los autenticados)
     |--------------------------------------------------------------------------
     */
@@ -172,11 +166,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::middleware(['auth', 'verified', 'role:administrador'])->prefix('admin')->name('admin.')->group(function () {
     // Gestión de usuarios
     Route::get('/usuarios', [AdminController::class, 'usuariosIndex'])->name('usuarios.index');
-<<<<<<< HEAD
     Route::get('/usuarios/crear', [AdminController::class, 'usuariosCreate'])->name('usuarios.create');
     Route::post('/usuarios', [AdminController::class, 'usuariosStore'])->name('usuarios.store');
-=======
->>>>>>> 952eaa0e88cd2a848c95971393bb77e190f53807
     Route::get('/usuarios/{usuario}', [AdminController::class, 'usuariosShow'])->name('usuarios.show');
     Route::get('/usuarios/{usuario}/editar', [AdminController::class, 'usuariosEdit'])->name('usuarios.edit');
     Route::patch('/usuarios/{usuario}', [AdminController::class, 'usuariosUpdate'])->name('usuarios.update');

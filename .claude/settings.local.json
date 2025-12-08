@@ -7,7 +7,12 @@
       "Bash(php artisan:*)",
       "Bash(for file in \"D:/eventmaster/eventmaster/resources/views/eventos/show.blade.php\" \"D:/eventmaster/eventmaster/resources/views/equipos/show.blade.php\" \"D:/eventmaster/eventmaster/resources/views/equipos/create.blade.php\")",
       "Bash(do sed -i \"s/@extends(''layouts\\.app'')/@extends(''layouts.master'')/g\" \"$file\")",
-      "Bash(done)"
+      "Bash(done)",
+      "Bash(netstat:*)",
+      "Bash(taskkill //F //PID 10844)",
+      "Bash(tasklist:*)",
+      "Bash(taskkill:*)",
+      "Bash(dir nul)"
     ],
     "deny": [],
     "ask": []
