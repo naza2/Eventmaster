@@ -20,7 +20,9 @@
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     <!-- Vite -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite('resources/css/app.css')
+    @vite('resources/js/app.js')
+
 </head>
 
 <body class="font-sans antialiased bg-gradient-to-br from-indigo-50 via-white to-purple-50 text-gray-900 min-h-screen">
