@@ -27,6 +27,11 @@
 
     <div class="min-h-screen flex flex-col">
 
+<<<<<<< HEAD
+=======
+        <!-- NAVBAR PÚBLICA -->
+       
+>>>>>>> 952eaa0e88cd2a848c95971393bb77e190f53807
 
         <!-- MENSAJES FLASH (opcional en páginas públicas) -->
         @if(session('success'))
@@ -37,6 +42,8 @@
                     </svg>
                     <p class="text-lg font-semibold">{{ session('success') }}</p>
                 </div>
+<<<<<<< HEAD
+=======
             </div>
         @endif
 
@@ -45,6 +52,61 @@
             {{ $slot }}
         </main>
 
+        <!-- FOOTER PÚBLICO -->
+        <footer class="bg-gray-900 text-white py-16 mt-20">
+            <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-10">
+                <div>
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center">
+                            <span class="text-2xl font-black">E</span>
+                        </div>
+                        <span class="text-2xl font-bold">EventMaster</span>
+                    </div>
+                    <p class="text-gray-400">
+                        El sistema #1 para gestionar eventos, hackathons y concursos universitarios.
+                    </p>
+                </div>
+
+                <div>
+                    <h4 class="text-xl font-bold mb-5">Enlaces</h4>
+                    <ul class="space-y-3 text-gray-400">
+                        <li><a href="#eventos" class="hover:text-white transition">Eventos</a></li>
+                        <li><a href="#sobre" class="hover:text-white transition">Sobre nosotros</a></li>
+                        <li><a href="#contacto" class="hover:text-white transition">Contacto</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-xl font-bold mb-5">Legal</h4>
+                    <ul class="space-y-3 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition">Términos de uso</a></li>
+                        <li><a href="#" class="hover:text-white transition">Privacidad</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-xl font-bold mb-5">Contacto</h4>
+                    <p class="text-gray-400">
+                        hola@eventmaster.edu.mx<br>
+                        +52 55 1234 5678
+                    </p>
+                </div>
+>>>>>>> 952eaa0e88cd2a848c95971393bb77e190f53807
+            </div>
+        @endif
+
+<<<<<<< HEAD
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="flex-1">
+            {{ $slot }}
+        </main>
+
+=======
+            <div class="max-w-7xl mx-auto px-6 mt-12 pt-8 border-t border-gray-800 text-center text-gray-500">
+                <p>© {{ date('Y') }} EventMaster • Hecho con Laravel 12</p>
+            </div>
+        </footer>
+>>>>>>> 952eaa0e88cd2a848c95971393bb77e190f53807
     </div>
 
     @stack('scripts')

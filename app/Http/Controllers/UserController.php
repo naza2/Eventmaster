@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
+<<<<<<< HEAD
     public function update(Request $request, User $usuario)
     {
         $request->validate([
@@ -47,6 +48,8 @@ class UserController extends Controller
         return redirect()->route('usuarios.index');
     }
 
+=======
+>>>>>>> 952eaa0e88cd2a848c95971393bb77e190f53807
     public function show(User $user)
     {
         $this->authorize('view', $user);

@@ -37,6 +37,7 @@ class ParticipanteController extends Controller
         return redirect()->route('equipos.show', $equipo)
                         ->with('success', '¡Miembro invitado correctamente!');
     }
+<<<<<<< HEAD
 
     public function destroy(Equipo $equipo, User $user)
     {
@@ -75,4 +76,6 @@ class ParticipanteController extends Controller
                         ->with('success', 'Usuario actualizado correctamente');
     }
     
+=======
+>>>>>>> 952eaa0e88cd2a848c95971393bb77e190f53807
 }

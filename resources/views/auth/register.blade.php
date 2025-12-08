@@ -101,6 +101,7 @@
                      }"></div>
             </div>
 
+<<<<<<< HEAD
             <p class="mt-2 text-sm" :class="{
                 'text-red-600': strength === 1,
                 'text-orange-600': strength === 2,
@@ -113,6 +114,21 @@
 
     <x-input-error :messages="$errors->get('password')" class="mt-2" />
 </div>
+=======
+                    <!-- Términos -->
+                    <div class="mb-8 flex items-center">
+                        <input type="checkbox" id="terms" name="terms" required class="h-5 w-5 text-purple-600 rounded focus:ring-purple-500">
+                        <label for="terms" class="ml-3 text-sm text-gray-600">
+                            Acepto los términos y condiciones
+                        </label>
+                    </div>
+
+                    <!-- Botón -->
+                    <button type="submit"
+                            class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-4 rounded-full transition shadow-lg text-lg">
+                        Crear Cuenta
+                    </button>
+>>>>>>> 952eaa0e88cd2a848c95971393bb77e190f53807
 
 <!-- Alpine.js para validar fuerza de contraseña -->
 <script>

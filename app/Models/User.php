@@ -21,8 +21,12 @@ class User extends Authenticatable
 
     protected $fillable = [
         'name', 'email', 'password', 'matricula', 'carrera_id',
+<<<<<<< HEAD
         'telefono', 'fecha_nacimiento', 'sexo', 'foto_perfil', 'verificado',
         'especialidad'
+=======
+        'telefono', 'fecha_nacimiento', 'sexo', 'foto_perfil', 'verificado'
+>>>>>>> 952eaa0e88cd2a848c95971393bb77e190f53807
     ];
 
     protected $hidden = ['password', 'remember_token'];
@@ -65,6 +69,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(Juez::class);
     }
+<<<<<<< HEAD
 
     public function invitacionesRecibidas(): HasMany
     {
@@ -95,6 +100,8 @@ class User extends Authenticatable
     {
         return $this->hasRole('administrador');
     }
+=======
+>>>>>>> 952eaa0e88cd2a848c95971393bb77e190f53807
 
     protected function casts(): array
     {

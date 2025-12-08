@@ -11,6 +11,7 @@ class EventController extends Controller
 {
     public function index(Request $request)
     {
+<<<<<<< HEAD
         $query = Evento::query();
 
         // Filtro por estado
@@ -32,6 +33,25 @@ class EventController extends Controller
         return view('eventos.index', compact('eventos'));
     }
 
+=======
+        $search = $request->input('search');
+
+        $eventos = Evento::withCount('equipos')
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('nombre', 'LIKE', "%{$search}%")
+                        ->orWhere('descripcion', 'LIKE', "%{$search}%");
+                });
+            })
+            ->orderByDesc('fecha_inicio')
+            ->paginate(12)
+            ->withQueryString(); // mantiene ?search= en la paginación
+
+        return view('eventos.index', compact('eventos', 'search'));
+    }
+
+
+>>>>>>> 952eaa0e88cd2a848c95971393bb77e190f53807
     public function show(Evento $evento)
     {
         $evento->load(['equipos.participantes.user', 'jueces.user']);
@@ -72,6 +92,7 @@ class EventController extends Controller
 
         return redirect()->route('eventos.show', $evento)->with('success', 'Evento creado correctamente');
     }
+<<<<<<< HEAD
 
     public function destroy(Event $event)
     {
@@ -79,4 +100,6 @@ class EventController extends Controller
         
         return redirect()->back()->with('success', 'Evento eliminado correctamente');
     }
+=======
+>>>>>>> 952eaa0e88cd2a848c95971393bb77e190f53807
 }

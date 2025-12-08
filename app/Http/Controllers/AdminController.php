@@ -5,22 +5,30 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Evento;
 use Illuminate\Http\Request;
+<<<<<<< HEAD
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+=======
+>>>>>>> 952eaa0e88cd2a848c95971393bb77e190f53807
 use Spatie\Permission\Models\Role;
 
 class AdminController extends Controller
 {
+<<<<<<< HEAD
     // ====================
     // USUARIOS
     // ====================
 
+=======
+    // USUARIOS
+>>>>>>> 952eaa0e88cd2a848c95971393bb77e190f53807
     public function usuariosIndex()
     {
         $usuarios = User::with('roles', 'carrera')->paginate(15);
         return view('admin.usuarios.index', compact('usuarios'));
     }
 
+<<<<<<< HEAD
     public function usuariosCreate()
     {
         $roles = Role::all();
@@ -73,6 +81,8 @@ class AdminController extends Controller
             ->with('success', 'Usuario creado correctamente');
     }
 
+=======
+>>>>>>> 952eaa0e88cd2a848c95971393bb77e190f53807
     public function usuariosShow(User $usuario)
     {
         $usuario->load('roles', 'carrera', 'participantes.equipo.evento');
@@ -83,12 +93,17 @@ class AdminController extends Controller
     {
         $roles = Role::all();
         $usuario->load('roles');
+<<<<<<< HEAD
         $carreras = \App\Models\Carrera::all();
         return view('admin.usuarios.edit', compact('usuario', 'roles', 'carreras'));
+=======
+        return view('admin.usuarios.edit', compact('usuario', 'roles'));
+>>>>>>> 952eaa0e88cd2a848c95971393bb77e190f53807
     }
 
     public function usuariosUpdate(Request $request, User $usuario)
     {
+<<<<<<< HEAD
         $request->validate([
             'name'           => 'required|string|max:255',
             'email'          => 'required|email|unique:users,email,' . $usuario->id,
@@ -132,10 +147,32 @@ class AdminController extends Controller
 
         return redirect()->route('admin.usuarios.show', $usuario)
             ->with('success', 'Usuario actualizado correctamente');
+=======
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $usuario->getKey(),
+            'roles' => 'array',
+            'roles.*' => 'string|exists:roles,name',
+        ]);
+
+        $usuario->update([
+            'name' => $data['name'],
+            'email' => $data['email'],
+        ]);
+
+        if (isset($data['roles'])) {
+            // Sincronizar roles por nombre (el formulario envía los nombres de rol)
+            $usuario->syncRoles($data['roles']);
+        }
+
+        // Después de actualizar, regresar al listado de usuarios
+        return redirect()->route('admin.usuarios.index')->with('success', 'Usuario actualizado correctamente');
+>>>>>>> 952eaa0e88cd2a848c95971393bb77e190f53807
     }
 
     public function usuariosDestroy(User $usuario)
     {
+<<<<<<< HEAD
         // Opcional: eliminar foto si es local
         if ($usuario->foto_perfil && !filter_var($usuario->foto_perfil, FILTER_VALIDATE_URL)) {
             Storage::disk('public')->delete($usuario->foto_perfil);
@@ -151,6 +188,13 @@ class AdminController extends Controller
     // EVENTOS
     // ====================
 
+=======
+        $usuario->delete();
+        return redirect()->route('admin.usuarios.index')->with('success', 'Usuario eliminado');
+    }
+
+    // EVENTOS
+>>>>>>> 952eaa0e88cd2a848c95971393bb77e190f53807
     public function eventosIndex()
     {
         $eventos = Evento::withCount('equipos')->orderByDesc('fecha_inicio')->paginate(15);
@@ -168,6 +212,7 @@ class AdminController extends Controller
         return view('admin.eventos.edit', compact('evento'));
     }
 
+<<<<<<< HEAD
     // ====================
     // CREAR EVENTO (store)
     // ====================
@@ -252,10 +297,34 @@ class AdminController extends Controller
 
         return redirect()->route('admin.eventos.show', $evento)
             ->with('success', 'Evento actualizado correctamente');
+=======
+    public function eventosUpdate(Request $request, Evento $evento)
+    {
+        $data = $request->validate([
+            'nombre' => 'required|string|max:255',
+            'descripcion' => 'nullable|string',
+            'fecha_inicio' => 'required|date',
+            'fecha_fin' => 'required|date|after_or_equal:fecha_inicio',
+            'max_miembros' => 'nullable|integer|min:1',
+            'estado' => 'required|in:inscripcion,en_curso,finalizado',
+            'banner' => 'nullable|image|max:4096',
+        ]);
+
+        if ($request->hasFile('banner')) {
+            $path = $request->file('banner')->store('event_banners', 'public');
+            $data['banner'] = $path;
+        }
+
+        $evento->update($data);
+
+        // Después de actualizar, regresar al listado de eventos
+        return redirect()->route('admin.eventos.index')->with('success', 'Evento actualizado correctamente');
+>>>>>>> 952eaa0e88cd2a848c95971393bb77e190f53807
     }
 
     public function eventosDestroy(Evento $evento)
     {
+<<<<<<< HEAD
         if ($evento->banner) {
             Storage::disk('public')->delete($evento->banner);
         }
@@ -265,3 +334,9 @@ class AdminController extends Controller
             ->with('success', 'Evento eliminado correctamente');
     }
 }
+=======
+        $evento->delete();
+        return redirect()->route('admin.eventos.index')->with('success', 'Evento eliminado');
+    }
+}
+>>>>>>> 952eaa0e88cd2a848c95971393bb77e190f53807
