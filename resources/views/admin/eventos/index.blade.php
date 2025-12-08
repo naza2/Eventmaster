@@ -1,17 +1,11 @@
-<<<<<<< HEAD
-{{-- resources/views/admin/eventos/index.blade.php --}}
-=======
->>>>>>> 952eaa0e88cd2a848c95971393bb77e190f53807
 @extends('layouts.master')
 
 @section('title', 'Gestión de Eventos')
 
 @section('content')
-<<<<<<< HEAD
 <div class="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 py-12">
     <div class="max-w-7xl mx-auto px-6">
 
-        <!-- Header Premium -->
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8 mb-16">
             <div>
                 <h1 class="text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 mb-4">
@@ -22,7 +16,6 @@
                 </p>
             </div>
 
-            <!-- Botón Crear Evento -->
             <a href="{{ route('eventos.create') }}"
                class="inline-flex items-center gap-4 px-10 py-6 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-black text-2xl rounded-3xl shadow-2xl hover:shadow-emerald-500/50 transform hover:scale-105 transition-all duration-300 group">
                 <svg class="w-10 h-10 group-hover:rotate-90 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -32,7 +25,6 @@
             </a>
         </div>
 
-        <!-- Estadísticas rápidas -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
             <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-white/20">
                 <div class="flex items-center justify-between">
@@ -99,7 +91,6 @@
 
     </div>
 
-    <!-- Tabla Premium -->
         <div class="bg-white/90 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/30 overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full">
@@ -118,68 +109,21 @@
                                 <td class="px-8 py-6">
                                     <div class="flex items-center gap-6">
                                         @if($evento->banner)
-                                            <img src="{{ 
-                                                    $evento->banner 
-                                                        ? (filter_var($evento->banner, FILTER_VALIDATE_URL) 
-                                                            ? $evento->banner 
+                                            <img src="{{
+                                                    $evento->banner
+                                                        ? (filter_var($evento->banner, FILTER_VALIDATE_URL)
+                                                            ? $evento->banner
                                                             : Storage::url($evento->banner))
-                                                        : asset('images/event-placeholder.jpg') 
+                                                        : asset('images/event-placeholder.jpg')
                                                 }}"
                                                     alt="{{ $evento->nombre }}"
                                                     class="w-20 h-20 rounded-2xl object-cover ring-4 ring-purple-100 shadow-lg">
                                         @else
                                             <div class="w-20 h-20 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl flex items-center justify-center text-white font-black text-3xl shadow-lg">
-=======
-<section class="py-16">
-    <div class="max-w-7xl mx-auto px-6">
-        <div class="mb-8 flex items-center justify-between">
-            <h1 class="text-4xl font-black text-gray-900">Gestión de Eventos</h1>
-            <a href="{{ route('eventos.create') }}" class="px-6 py-3 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700">
-                + Crear Evento
-            </a>
-        </div>
-
-        <!-- Información de paginación -->
-        <div class="mb-6 flex items-center justify-between bg-purple-50 rounded-2xl p-6">
-            <div>
-                <p class="text-sm text-purple-600 font-bold">Total de Eventos</p>
-                <p class="text-3xl font-black text-purple-700">{{ $eventos->total() }}</p>
-            </div>
-            <div class="text-right">
-                <p class="text-sm text-purple-600 font-bold">Página {{ $eventos->currentPage() }} de {{ $eventos->lastPage() }}</p>
-                <p class="text-lg text-purple-700 font-bold">Mostrando {{ $eventos->count() }} de {{ $eventos->total() }}</p>
-            </div>
-        </div>
-
-        <!-- Tabla de eventos -->
-        <div class="bg-white rounded-3xl shadow-xl overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
-                        <tr>
-                            <th class="px-6 py-4 text-left font-bold">Evento</th>
-                            <th class="px-6 py-4 text-left font-bold">Fecha Inicio</th>
-                            <th class="px-6 py-4 text-left font-bold">Fecha Fin</th>
-                            <th class="px-6 py-4 text-left font-bold">Estado</th>
-                            <th class="px-6 py-4 text-center font-bold">Equipos</th>
-                            <th class="px-6 py-4 text-center font-bold">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-200">
-                        @forelse($eventos as $evento)
-                            <tr class="hover:bg-gray-50 transition">
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center gap-4">
-                                        @if($evento->banner)
-                                            <img src="{{ Storage::url($evento->banner) }}" alt="{{ $evento->nombre }}" class="w-16 h-16 rounded-lg object-cover">
-                                        @else
-                                            <div class="w-16 h-16 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold">
->>>>>>> 952eaa0e88cd2a848c95971393bb77e190f53807
                                                 {{ Str::upper(substr($evento->nombre, 0, 2)) }}
                                             </div>
                                         @endif
                                         <div>
-<<<<<<< HEAD
                                             <h3 class="text-2xl font-black text-gray-900">{{ $evento->nombre }}</h3>
                                             <p class="text-gray-600 font-medium">
                                                 Máx. {{ $evento->max_miembros ?? 'Sin límite' }} miembros por equipo
@@ -243,65 +187,16 @@
                                             Eliminar
                                         </button>
 
-                                        <form id="delete-{{ $evento->id }}" 
-                                              action="{{ route('admin.eventos.destroy', $evento) }}" 
+                                        <form id="delete-{{ $evento->id }}"
+                                              action="{{ route('admin.eventos.destroy', $evento) }}"
                                               method="POST" class="hidden">
                                             @csrf @method('DELETE')
-=======
-                                            <p class="font-bold text-gray-900 max-w-xs">{{ $evento->nombre }}</p>
-                                            <p class="text-sm text-gray-600">Max. {{ $evento->max_miembros }} miembros/equipo</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 text-gray-700">
-                                    {{ $evento->fecha_inicio->format('d/m/Y H:i') }}
-                                </td>
-                                <td class="px-6 py-4 text-gray-700">
-                                    {{ $evento->fecha_fin->format('d/m/Y H:i') }}
-                                </td>
-                                <td class="px-6 py-4">
-                                    @switch($evento->estado)
-                                        @case('inscripcion')
-                                            <span class="px-3 py-1 bg-green-100 text-green-700 font-bold rounded-full text-sm">Inscripción abierta</span>
-                                            @break
-                                        @case('en_curso')
-                                            <span class="px-3 py-1 bg-yellow-100 text-yellow-700 font-bold rounded-full text-sm">En curso</span>
-                                            @break
-                                        @case('finalizado')
-                                            <span class="px-3 py-1 bg-gray-100 text-gray-700 font-bold rounded-full text-sm">Finalizado</span>
-                                            @break
-                                    @endswitch
-                                </td>
-                                <td class="px-6 py-4 text-center">
-                                    <span class="px-3 py-1 bg-purple-100 text-purple-700 font-bold rounded-full">
-                                        {{ $evento->equipos_count ?? 0 }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 text-center">
-                                    <div class="flex items-center justify-center gap-3">
-                                        <a href="{{ route('admin.eventos.show', $evento) }}" 
-                                           class="px-4 py-2 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition text-sm">
-                                            Ver
-                                        </a>
-                                        <a href="{{ route('admin.eventos.edit', $evento) }}" 
-                                           class="px-4 py-2 bg-yellow-500 text-white font-bold rounded-lg hover:bg-yellow-600 transition text-sm">
-                                            Editar
-                                        </a>
-                                        <form action="{{ route('admin.eventos.destroy', $evento) }}" method="POST" class="inline"
-                                              onsubmit="return confirm('¿Estás seguro de que deseas eliminar este evento?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="px-4 py-2 bg-red-500 text-white font-bold rounded-lg hover:bg-red-600 transition text-sm">
-                                                Eliminar
-                                            </button>
->>>>>>> 952eaa0e88cd2a848c95971393bb77e190f53807
                                         </form>
                                     </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-<<<<<<< HEAD
                                 <td colspan="5" class="px-8 py-24 text-center">
                                     <div class="text-gray-500">
                                         <svg class="w-24 h-24 mx-auto mb-6 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -310,10 +205,6 @@
                                         <p class="text-2xl font-bold">No hay eventos registrados</p>
                                         <p class="mt-3">¡Crea el primero ahora!</p>
                                     </div>
-=======
-                                <td colspan="6" class="px-6 py-12 text-center text-gray-600">
-                                    No hay eventos registrados
->>>>>>> 952eaa0e88cd2a848c95971393bb77e190f53807
                                 </td>
                             </tr>
                         @endforelse
@@ -321,13 +212,11 @@
                 </table>
             </div>
 
-<<<<<<< HEAD
-            <!-- Paginación Premium -->
             <div class="px-8 py-6 border-t border-gray-200 bg-white/50 backdrop-blur">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
                     <p class="text-gray-700 font-medium">
-                        Mostrando <span class="font-black text-purple-600">{{ $eventos->firstItem() }}</span> 
-                        al <span class="font-black text-purple-600">{{ $eventos->lastItem() }}</span> 
+                        Mostrando <span class="font-black text-purple-600">{{ $eventos->firstItem() }}</span>
+                        al <span class="font-black text-purple-600">{{ $eventos->lastItem() }}</span>
                         de <span class="font-black text-indigo-600">{{ $eventos->total() }}</span> eventos
                     </p>
                     <div>
@@ -339,13 +228,3 @@
 
 </div>
 @endsection
-=======
-            <!-- Paginación -->
-            <div class="px-6 py-4 border-t border-gray-200">
-                {{ $eventos->links() }}
-            </div>
-        </div>
-    </div>
-</section>
-@endsection
->>>>>>> 952eaa0e88cd2a848c95971393bb77e190f53807

@@ -11,47 +11,28 @@ class EventController extends Controller
 {
     public function index(Request $request)
     {
-<<<<<<< HEAD
         $query = Evento::query();
 
-        // Filtro por estado
         if ($request->filled('estado') && in_array($request->estado, ['inscripcion', 'en_curso', 'finalizado'])) {
             $query->where('estado', $request->estado);
         }
 
-        // Búsqueda por nombre
         if ($request->filled('search')) {
-            $query->where('nombre', 'like', '%' . trim($request->search) . '%');
+            $search = trim($request->search);
+            $query->where(function ($q) use ($search) {
+                $q->where('nombre', 'like', "%{$search}%")
+                  ->orWhere('descripcion', 'like', "%{$search}%");
+            });
         }
 
-        // Cargar conteo de equipos + ordenar por más reciente
         $eventos = $query->withCount('equipos')
                         ->latest('fecha_inicio')
                         ->paginate(12)
-                        ->withQueryString(); // ¡¡ESTO ES CLAVE!!
+                        ->withQueryString();
 
         return view('eventos.index', compact('eventos'));
     }
 
-=======
-        $search = $request->input('search');
-
-        $eventos = Evento::withCount('equipos')
-            ->when($search, function ($query, $search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('nombre', 'LIKE', "%{$search}%")
-                        ->orWhere('descripcion', 'LIKE', "%{$search}%");
-                });
-            })
-            ->orderByDesc('fecha_inicio')
-            ->paginate(12)
-            ->withQueryString(); // mantiene ?search= en la paginación
-
-        return view('eventos.index', compact('eventos', 'search'));
-    }
-
-
->>>>>>> 952eaa0e88cd2a848c95971393bb77e190f53807
     public function show(Evento $evento)
     {
         $evento->load(['equipos.participantes.user', 'jueces.user']);
@@ -81,7 +62,6 @@ class EventController extends Controller
         }
 
         $data['slug'] = Str::slug($data['nombre']);
-        // Asegurar slug único
         $original = $data['slug'];
         $i = 1;
         while (Evento::where('slug', $data['slug'])->exists()) {
@@ -92,14 +72,11 @@ class EventController extends Controller
 
         return redirect()->route('eventos.show', $evento)->with('success', 'Evento creado correctamente');
     }
-<<<<<<< HEAD
 
-    public function destroy(Event $event)
+    public function destroy(Evento $evento)
     {
-        $event->delete();
-        
+        $evento->delete();
+
         return redirect()->back()->with('success', 'Evento eliminado correctamente');
     }
-=======
->>>>>>> 952eaa0e88cd2a848c95971393bb77e190f53807
 }

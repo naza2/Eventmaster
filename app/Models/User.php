@@ -21,25 +21,19 @@ class User extends Authenticatable
 
     protected $fillable = [
         'name', 'email', 'password', 'matricula', 'carrera_id',
-<<<<<<< HEAD
         'telefono', 'fecha_nacimiento', 'sexo', 'foto_perfil', 'verificado',
         'especialidad'
-=======
-        'telefono', 'fecha_nacimiento', 'sexo', 'foto_perfil', 'verificado'
->>>>>>> 952eaa0e88cd2a848c95971393bb77e190f53807
     ];
 
     protected $hidden = ['password', 'remember_token'];
 
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'password' => 'hashed',
         'fecha_nacimiento' => 'date',
         'verificado' => 'boolean',
     ];
 
-    /**
-     * Convertir email a minúsculas automáticamente
-     */
     public function setEmailAttribute($value): void
     {
         $this->attributes['email'] = strtolower($value);
@@ -69,7 +63,6 @@ class User extends Authenticatable
     {
         return $this->hasMany(Juez::class);
     }
-<<<<<<< HEAD
 
     public function invitacionesRecibidas(): HasMany
     {
@@ -99,15 +92,5 @@ class User extends Authenticatable
     public function esAdmin(): bool
     {
         return $this->hasRole('administrador');
-    }
-=======
->>>>>>> 952eaa0e88cd2a848c95971393bb77e190f53807
-
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
     }
 }

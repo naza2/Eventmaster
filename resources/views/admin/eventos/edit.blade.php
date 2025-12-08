@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-{{-- resources/views/admin/eventos/edit.blade.php --}}
 @extends('layouts.master')
 
 @section('title', 'Editar Evento - ' . $evento->nombre)
@@ -8,7 +6,6 @@
 <div class="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 py-12">
     <div class="max-w-5xl mx-auto px-6">
 
-        <!-- Header Premium -->
         <div class="text-center mb-16">
             <h1 class="text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 mb-6">
                 Editar Evento
@@ -18,7 +15,6 @@
             </p>
         </div>
 
-        <!-- Botón volver -->
         <div class="mb-10">
             <a href="{{ route('admin.eventos.show', $evento) }}"
                class="inline-flex items-center gap-4 px-8 py-5 bg-white/90 backdrop-blur-xl text-indigo-600 font-black text-xl rounded-3xl hover:bg-indigo-50 transition transform hover:-translate-x-2 shadow-2xl">
@@ -29,11 +25,9 @@
             </a>
         </div>
 
-        <!-- Card principal -->
         <div class="bg-white/90 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/30 overflow-hidden">
             <div class="p-10 lg:p-14">
 
-                <!-- Mensajes de error -->
                 @if($errors->any())
                     <div class="mb-10 bg-gradient-to-r from-red-100 to-rose-100 border-l-8 border-red-500 rounded-2xl p-8 shadow-xl">
                         <div class="flex items-center gap-6">
@@ -56,17 +50,15 @@
                     @csrf
                     @method('PATCH')
 
-                    <!-- Banner del evento - Estilo COMPACTO como la foto de perfil -->
                     <div class="mb-10">
                         <h3 class="text-xl font-black text-gray-900 mb-6 text-center">
                             Banner del evento <span class="text-gray-500 font-normal">(opcional)</span>
                         </h3>
 
-                        <div x-data="{ 
+                        <div x-data="{
                             preview: '{{ old('banner', $evento->banner ? (filter_var($evento->banner, FILTER_VALIDATE_URL) ? $evento->banner : Storage::url($evento->banner)) : '') }}'
                         }" class="max-w-2xl mx-auto">
 
-                            <!-- Vista previa compacta -->
                             <div class="flex justify-center mb-6">
                                 <div class="relative">
                                     <div class="w-96 h-48 rounded-2xl overflow-hidden shadow-xl ring-8 ring-purple-100 bg-gradient-to-br from-indigo-200 to-pink-200">
@@ -82,7 +74,6 @@
                                         </template>
                                     </div>
 
-                                    <!-- Check verde si hay banner -->
                                     <div x-show="preview" class="absolute -bottom-2 -right-2">
                                         <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center shadow-lg">
                                             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -93,10 +84,8 @@
                                 </div>
                             </div>
 
-                            <!-- Opciones en fila (igual que foto de perfil) -->
                             <div class="grid grid-cols-2 gap-4">
 
-                                <!-- Subir archivo -->
                                 <label class="cursor-pointer">
                                     <input type="file"
                                         name="banner"
@@ -113,7 +102,6 @@
                                     </div>
                                 </label>
 
-                                <!-- Pegar URL -->
                                 <div class="relative">
                                     <input type="url"
                                         name="banner_url"
@@ -129,18 +117,15 @@
                                 </div>
                             </div>
 
-                            <!-- Nota pequeña -->
                             <p class="text-center mt-4 text-xs text-gray-500">
                                 Recomendado: 1600×400px • JPG, PNG, WebP • Máx 5MB
                             </p>
                         </div>
                     </div>
-                    
 
-                    <!-- Formulario -->
+
                     <div class="grid lg:grid-cols-2 gap-10">
 
-                        <!-- Columna 1 -->
                         <div class="space-y-8">
                             <div>
                                 <label class="block text-xl font-bold text-gray-800 mb-4">Nombre del evento *</label>
@@ -163,18 +148,17 @@
                             </div>
                         </div>
 
-                        <!-- Columna 2 -->
                         <div class="space-y-8">
                             <div>
                                 <label class="block text-xl font-bold text-gray-800 mb-4">Fecha y hora de inicio *</label>
-                                <input type="datetime-local" name="fecha_inicio" 
+                                <input type="datetime-local" name="fecha_inicio"
                                        value="{{ old('fecha_inicio', $evento->fecha_inicio->format('Y-m-d\TH:i')) }}" required
                                        class="w-full px-8 py-6 text-xl border-2 border-gray-200 rounded-2xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 shadow-lg transition">
                             </div>
 
                             <div>
                                 <label class="block text-xl font-bold text-gray-800 mb-4">Fecha y hora de fin *</label>
-                                <input type="datetime-local" name="fecha_fin" 
+                                <input type="datetime-local" name="fecha_fin"
                                        value="{{ old('fecha_fin', $evento->fecha_fin->format('Y-m-d\TH:i')) }}" required
                                        class="w-full px-8 py-6 text-xl border-2 border-gray-200 rounded-2xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 shadow-lg transition">
                             </div>
@@ -197,31 +181,28 @@
                         </div>
                     </div>
 
-                    <!-- Botones finales - Versión PEQUEÑA, ELEGANTE y MODERNA -->
 <div class="pt-10 border-t-2 border-purple-100 flex flex-col sm:flex-row gap-5">
-    <!-- Guardar -->
     <button type="submit"
-            class="flex-1 px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 
-                   hover:from-indigo-700 hover:to-purple-700 
-                   text-white font-bold text-lg rounded-2xl 
-                   shadow-xl hover:shadow-purple-500/40 
-                   transform hover:-translate-y-1 
-                   transition-all duration-300 
+            class="flex-1 px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600
+                   hover:from-indigo-700 hover:to-purple-700
+                   text-white font-bold text-lg rounded-2xl
+                   shadow-xl hover:shadow-purple-500/40
+                   transform hover:-translate-y-1
+                   transition-all duration-300
                    flex items-center justify-center gap-3 group">
         Guardar cambios
-        <svg class="w-6 h-6 group-hover:translate-x-2 transition-transform" 
+        <svg class="w-6 h-6 group-hover:translate-x-2 transition-transform"
              fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
         </svg>
     </button>
 
-    <!-- Cancelar -->
     <a href="{{ route('admin.eventos.show', $evento) }}"
-       class="flex-1 px-8 py-4 bg-gradient-to-r from-gray-200 to-gray-300 
-              hover:from-gray-300 hover:to-gray-400 
-              text-gray-800 font-bold text-lg rounded-2xl 
-              text-center shadow-lg hover:shadow-xl 
-              transform hover:scale-105 
+       class="flex-1 px-8 py-4 bg-gradient-to-r from-gray-200 to-gray-300
+              hover:from-gray-300 hover:to-gray-400
+              text-gray-800 font-bold text-lg rounded-2xl
+              text-center shadow-lg hover:shadow-xl
+              transform hover:scale-105
               transition-all duration-300">
         Cancelar
     </a>
@@ -232,102 +213,3 @@
     </div>
 </div>
 @endsection
-=======
-@extends('layouts.master')
-
-@section('title', 'Editar Evento')
-
-@section('content')
-<section class="py-16">
-    <div class="max-w-3xl mx-auto px-6">
-        <div class="mb-8">
-            <a href="{{ route('admin.eventos.show', $evento) }}" class="text-indigo-600 hover:text-indigo-700 font-bold">
-                ← Volver al evento
-            </a>
-        </div>
-
-        <div class="bg-white rounded-3xl shadow-xl p-10">
-            <h1 class="text-3xl font-black text-gray-900 mb-8">Editar: {{ $evento->nombre }}</h1>
-
-            @if($errors->any())
-                <div class="mb-6 bg-red-50 border border-red-200 text-red-800 rounded-xl p-4">
-                    <ul class="list-disc pl-5">
-                        @foreach($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
-            <form action="{{ route('admin.eventos.update', $evento) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
-                @csrf
-                @method('PATCH')
-                <input type="hidden" name="tab" value="{{ request()->query('tab') }}">
-
-                <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-2">Nombre</label>
-                    <input type="text" name="nombre" value="{{ old('nombre', $evento->nombre) }}" required
-                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-2">Descripción</label>
-                    <textarea name="descripcion" rows="4" 
-                              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100">{{ old('descripcion', $evento->descripcion) }}</textarea>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Fecha de Inicio</label>
-                        <input type="datetime-local" name="fecha_inicio" value="{{ old('fecha_inicio', $evento->fecha_inicio->format('Y-m-d\TH:i')) }}" required
-                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Fecha de Fin</label>
-                        <input type="datetime-local" name="fecha_fin" value="{{ old('fecha_fin', $evento->fecha_fin->format('Y-m-d\TH:i')) }}" required
-                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Máximo de miembros por equipo</label>
-                        <input type="number" name="max_miembros" value="{{ old('max_miembros', $evento->max_miembros) }}" min="1"
-                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Estado</label>
-                        <select name="estado" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100">
-                            <option value="inscripcion" {{ old('estado', $evento->estado) === 'inscripcion' ? 'selected' : '' }}>Inscripción abierta</option>
-                            <option value="en_curso" {{ old('estado', $evento->estado) === 'en_curso' ? 'selected' : '' }}>En curso</option>
-                            <option value="finalizado" {{ old('estado', $evento->estado) === 'finalizado' ? 'selected' : '' }}>Finalizado</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-2">Banner (imagen)</label>
-                    @if($evento->banner)
-                        <div class="mb-4">
-                            <img src="{{ Storage::url($evento->banner) }}" alt="{{ $evento->nombre }}" class="max-h-48 rounded-xl">
-                            <p class="text-sm text-gray-600 mt-2">Banner actual</p>
-                        </div>
-                    @endif
-                    <input type="file" name="banner" accept="image/*" 
-                           class="w-full px-4 py-3 border border-gray-300 rounded-xl">
-                </div>
-
-                <div class="pt-6 border-t border-gray-200 flex gap-4">
-                    <button type="submit" class="flex-1 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-xl hover:shadow-xl transition">
-                        Guardar cambios
-                    </button>
-                    <a href="{{ route('admin.eventos.show', $evento) }}" class="flex-1 px-6 py-3 bg-gray-200 text-gray-700 font-bold rounded-xl hover:bg-gray-300 transition text-center">
-                        Cancelar
-                    </a>
-                </div>
-            </form>
-        </div>
-    </div>
-</section>
-@endsection
->>>>>>> 952eaa0e88cd2a848c95971393bb77e190f53807

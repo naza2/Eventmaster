@@ -89,13 +89,8 @@
                 <div id="miembros" class="bg-white rounded-3xl shadow-xl p-10">
                     <div class="flex items-center justify-between mb-10">
                         <h2 class="text-4xl font-black text-gray-900">Miembros del equipo</h2>
-<<<<<<< HEAD
                         @can('invite', $equipo)
                             <a href="{{ route('equipos.invitar', $equipo) }}" class="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-xl hover:shadow-xl transition">
-=======
-                        @can('update', $equipo)
-                            <a href="#" class="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-xl hover:shadow-xl transition">
->>>>>>> 952eaa0e88cd2a848c95971393bb77e190f53807
                                 + Invitar miembro
                             </a>
                         @endcan
