@@ -228,8 +228,8 @@
                                         name="roles[]"
                                         value="{{ $role->name }}"
                                         class="sr-only"
-                                        x-model="selected"
-                                        {{ in_array($role->name, old('roles', [])) ? 'checked' : '' }}>
+                                        :checked="selected"
+                                        @change="selected = $event.target.checked">
 
                                     <div class="text-4xl mb-3">
                                         @if($role->name === 'administrador')
@@ -263,6 +263,9 @@
                             </div>
                         @endforeach
                     </div>
+                    @error('roles')
+                        <p class="mt-3 text-center text-red-600 font-bold text-lg">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <!-- Botones finales - Versión PEQUEÑA, BONITA y PROFESIONAL -->

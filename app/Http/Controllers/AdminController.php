@@ -8,6 +8,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Spatie\Permission\Models\Role;
+use App\Http\Requests\UsuarioStoreRequest;
+use App\Http\Requests\UsuarioUpdateRequest;
+use App\Http\Requests\EventoStoreRequest;
+use App\Http\Requests\EventoUpdateRequest;
 
 class AdminController extends Controller
 {
@@ -28,23 +32,8 @@ class AdminController extends Controller
         return view('admin.usuarios.create', compact('roles', 'carreras'));
     }
 
-    public function usuariosStore(Request $request)
+    public function usuariosStore(UsuarioStoreRequest $request)
     {
-        $request->validate([
-            'name'           => 'required|string|max:255',
-            'email'          => 'required|email|unique:users,email',
-            'password'       => 'required|string|min:8|confirmed',
-            'matricula'      => 'nullable|string|max:20|unique:users,matricula',
-            'telefono'       => 'nullable|string|max:20',
-            'carrera_id'     => 'required|exists:carreras,id',
-            'roles'          => 'required|array|min:1',
-            'roles.*'        => 'exists:roles,name',
-            'fecha_nacimiento' => 'nullable|date',
-            'sexo'           => 'nullable|in:M,F,Otro',
-            'verificado'     => 'sometimes|boolean',
-            'foto_perfil'    => 'nullable|image|mimes:jpg,jpeg,png,webp,gif|max:5120',
-            'foto_url'       => 'nullable|url|starts_with:https://,http://',
-        ]);
 
         $usuario = User::create([
             'name'       => $request->name,
@@ -86,22 +75,8 @@ class AdminController extends Controller
         return view('admin.usuarios.edit', compact('usuario', 'roles', 'carreras'));
     }
 
-    public function usuariosUpdate(Request $request, User $usuario)
+    public function usuariosUpdate(UsuarioUpdateRequest $request, User $usuario)
     {
-        $request->validate([
-            'name'           => 'required|string|max:255',
-            'email'          => 'required|email|unique:users,email,' . $usuario->id,
-            'matricula'      => 'nullable|string|max:20|unique:users,matricula,' . $usuario->id,
-            'telefono'       => 'nullable|string|max:20',
-            'carrera_id'     => 'required|exists:carreras,id',
-            'roles'          => 'required|array|min:1',
-            'roles.*'        => 'exists:roles,name',
-            'fecha_nacimiento' => 'nullable|date',
-            'sexo'           => 'nullable|in:M,F,Otro',
-            'verificado'     => 'sometimes|boolean',
-            'foto_perfil'    => 'nullable|image|mimes:jpg,jpeg,png,webp,gif|max:5120',
-            'foto_url'       => 'nullable|url|starts_with:https://,http://',
-        ]);
 
         $usuario->update([
             'name'       => $request->name,
@@ -164,18 +139,8 @@ class AdminController extends Controller
         return view('admin.eventos.edit', compact('evento'));
     }
 
-    public function eventosStore(Request $request)
+    public function eventosStore(EventoStoreRequest $request)
     {
-        $request->validate([
-            'nombre'        => 'required|string|max:255',
-            'descripcion'   => 'nullable|string',
-            'fecha_inicio'  => 'required|date',
-            'fecha_fin'     => 'required|date|after_or_equal:fecha_inicio',
-            'max_miembros'  => 'nullable|integer|min:1|max:20',
-            'estado'        => 'required|in:inscripcion,en_curso,finalizado',
-            'banner'        => 'nullable|image|mimes:jpg,jpeg,png,webp,gif|max:5120',
-            'banner_url'    => 'nullable|url|starts_with:https://,http://',
-        ]);
 
         $evento = Evento::create([
             'nombre'       => $request->nombre,
@@ -199,18 +164,8 @@ class AdminController extends Controller
             ->with('success', 'Evento creado exitosamente');
     }
 
-    public function eventosUpdate(Request $request, Evento $evento)
+    public function eventosUpdate(EventoUpdateRequest $request, Evento $evento)
     {
-        $request->validate([
-            'nombre'        => 'required|string|max:255',
-            'descripcion'   => 'nullable|string',
-            'fecha_inicio'  => 'required|date',
-            'fecha_fin'     => 'required|date|after_or_equal:fecha_inicio',
-            'max_miembros'  => 'nullable|integer|min:1|max:20',
-            'estado'        => 'required|in:inscripcion,en_curso,finalizado',
-            'banner'        => 'nullable|image|mimes:jpg,jpeg,png,webp,gif|max:5120',
-            'banner_url'    => 'nullable|url|starts_with:https://,http://',
-        ]);
 
         $evento->update([
             'nombre'       => $request->nombre,
