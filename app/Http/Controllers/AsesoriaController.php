@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Equipo;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SolicitudAsesoriaMail;
 
 class AsesoriaController extends Controller
 {
@@ -21,13 +24,23 @@ class AsesoriaController extends Controller
             return back()->withErrors(['asesor_id' => 'Este asesor ya tiene una solicitud pendiente']);
         }
 
-        $equipo->asesorias()->create([
+        $asesoria = $equipo->asesorias()->create([
             'user_id' => $request->asesor_id,
             'comentarios' => $request->mensaje
         ]);
 
+        // Enviar correo al asesor
+        try {
+            $asesor = User::find($request->asesor_id);
+            if ($asesor && $asesor->email) {
+                Mail::to($asesor->email)->send(new SolicitudAsesoriaMail($asesoria));
+            }
+        } catch (\Exception $e) {
+            \Log::error('Error enviando correo de solicitud de asesoría: ' . $e->getMessage());
+        }
+
         return redirect()->route('equipos.show', $equipo)
-                        ->with('success', '¡Solicitud enviada! El asesor recibirá una notificación');
+                        ->with('success', '¡Solicitud enviada! El asesor recibirá una notificación por correo');
     }
 
     public function misSolicitudes()

@@ -8,6 +8,10 @@ use App\Models\User;
 use App\Models\Participante;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\InvitacionEquipoMail;
+use App\Mail\InvitacionAceptadaMail;
+use App\Mail\InvitacionRechazadaMail;
 
 class InvitacionController extends Controller
 {
@@ -94,12 +98,20 @@ class InvitacionController extends Controller
             return back()->with('error', 'El equipo ya alcanzó el máximo de miembros.');
         }
 
-        Invitacion::create([
+        $invitacion = Invitacion::create([
             'equipo_id' => $equipo->id,
             'invitado_por' => Auth::id(),
             'invitado_id' => $invitado->id,
             'mensaje' => $request->mensaje,
         ]);
+
+        // Enviar correo de invitación
+        try {
+            Mail::to($invitado->email)->send(new InvitacionEquipoMail($invitacion));
+        } catch (\Exception $e) {
+            // Log error but don't fail the invitation
+            \Log::error('Error enviando correo de invitación: ' . $e->getMessage());
+        }
 
         return back()->with('success', 'Invitación enviada exitosamente.');
     }
@@ -135,6 +147,13 @@ class InvitacionController extends Controller
             'rol' => 'miembro',
         ]);
 
+        // Notificar al líder del equipo
+        try {
+            Mail::to($invitacion->invitante->email)->send(new InvitacionAceptadaMail($invitacion));
+        } catch (\Exception $e) {
+            \Log::error('Error enviando correo de aceptación: ' . $e->getMessage());
+        }
+
         // Rechazar otras invitaciones pendientes del mismo evento
         Invitacion::where('invitado_id', Auth::id())
             ->whereHas('equipo', function($query) use ($equipo) {
@@ -167,6 +186,13 @@ class InvitacionController extends Controller
         }
 
         $invitacion->rechazar();
+
+        // Notificar al líder del equipo
+        try {
+            Mail::to($invitacion->invitante->email)->send(new InvitacionRechazadaMail($invitacion));
+        } catch (\Exception $e) {
+            \Log::error('Error enviando correo de rechazo: ' . $e->getMessage());
+        }
 
         return back()->with('success', 'Invitación rechazada.');
     }
