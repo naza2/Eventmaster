@@ -196,36 +196,55 @@
                         <h3 class="text-xl font-black text-gray-900 mb-5 text-center">Asignar Roles</h3>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             @foreach($roles as $role)
-                                <label class="relative flex flex-col items-center p-4 bg-white rounded-2xl shadow-lg cursor-pointer hover:shadow-xl transition transform hover:-translate-y-1
-                                    {{ in_array($role->name, old('roles', [])) ? 'ring-3 ring-purple-400 bg-purple-50' : 'ring-1 ring-gray-200' }}">
-                                    <input type="checkbox"
-                                        name="roles[]"
-                                        value="{{ $role->name }}"
-                                        class="sr-only"
-                                        {{ in_array($role->name, old('roles', [])) ? 'checked' : '' }}>
-                                    
-                                    <div class="text-4xl mb-3">
-                                        @if($role->name === 'administrador') 
-                                            <svg class="w-10 h-10 text-purple-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                                        @elseif($role->name === 'participante')
-                                            <svg class="w-10 h-10 text-emerald-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z M12 14l6.16-3.422A12.083 12.083 0 0112 21.5c-2.4 0-4.6-.7-6.5-2.1L12 14z"/></svg>
-                                        @else
-                                            <svg class="w-10 h-10 text-gray-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
-                                        @endif
-                                    </div>
-                                    
-                                    <p class="text-base font-black text-gray-900">
-                                        {{ ucfirst(str_replace('_', ' ', $role->name)) }}
-                                    </p>
-                                    
-                                    <div class="mt-3 w-8 h-8 rounded-full border-3 border-gray-300 transition
-                                        {{ in_array($role->name, old('roles', [])) ? 'bg-purple-600 border-purple-600' : '' }}">
-                                        <div class="w-full h-full rounded-full scale-0 bg-white transition-transform duration-300
-                                            {{ in_array($role->name, old('roles', [])) ? 'scale-100' : '' }}"></div>
-                                    </div>
-                                </label>
+                                @php
+                                    $userRoles = old('roles', $usuario->roles->pluck('name')->toArray());
+                                @endphp
+                                <div x-data="{ selected: {{ in_array($role->name, $userRoles) ? 'true' : 'false' }} }">
+                                    <label @click="selected = !selected"
+                                        :class="selected ? 'ring-4 ring-purple-400 bg-purple-50' : 'ring-2 ring-gray-200'"
+                                        class="relative flex flex-col items-center p-4 bg-white rounded-2xl shadow-lg cursor-pointer hover:shadow-xl transition transform hover:-translate-y-1">
+                                        <input type="checkbox"
+                                            name="roles[]"
+                                            value="{{ $role->name }}"
+                                            class="sr-only"
+                                            :checked="selected"
+                                            @change="selected = $event.target.checked">
+
+                                        <div class="text-4xl mb-3">
+                                            @if($role->name === 'administrador')
+                                                <svg class="w-10 h-10 text-purple-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                                            @elseif($role->name === 'participante')
+                                                <svg class="w-10 h-10 text-emerald-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z M12 14l6.16-3.422A12.083 12.083 0 0112 21.5c-2.4 0-4.6-.7-6.5-2.1L12 14z"/></svg>
+                                            @else
+                                                <svg class="w-10 h-10 text-gray-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+                                            @endif
+                                        </div>
+
+                                        <p class="text-base font-black text-gray-900">
+                                            {{ ucfirst(str_replace('_', ' ', $role->name)) }}
+                                        </p>
+
+                                        <div :class="selected ? 'bg-purple-600 border-purple-600' : 'border-gray-300'"
+                                            class="mt-3 w-8 h-8 rounded-full border-3 transition flex items-center justify-center">
+                                            <svg x-show="selected"
+                                                x-transition
+                                                class="w-5 h-5 text-white"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    stroke-width="3"
+                                                    d="M5 13l4 4L19 7"/>
+                                            </svg>
+                                        </div>
+                                    </label>
+                                </div>
                             @endforeach
                         </div>
+                        @error('roles')
+                            <p class="mt-3 text-center text-red-600 font-bold text-lg">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <!-- Verificado -->
