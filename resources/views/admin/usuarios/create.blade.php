@@ -221,8 +221,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         @foreach($roles as $role)
                             <div x-data="{ selected: {{ in_array($role->name, old('roles', [])) ? 'true' : 'false' }} }">
-                                <label @click="selected = !selected"
-                                    :class="selected ? 'ring-4 ring-purple-400 bg-purple-50' : 'ring-2 ring-gray-200'"
+                                <label :class="selected ? 'ring-4 ring-purple-400 bg-purple-50' : 'ring-2 ring-gray-200'"
                                     class="relative flex flex-col items-center p-4 bg-white rounded-2xl shadow-lg cursor-pointer hover:shadow-xl transition transform hover:-translate-y-1">
                                     <input type="checkbox"
                                         name="roles[]"
@@ -233,11 +232,25 @@
 
                                     <div class="text-4xl mb-3">
                                         @if($role->name === 'administrador')
-                                            <svg class="w-10 h-10 text-purple-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                                        @elseif($role->name === 'participante')
-                                            <svg class="w-10 h-10 text-emerald-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z M12 14l6.16-3.422A12.083 12.083 0 0112 21.5c-2.4 0-4.6-.7-6.5-2.1L12 14z"/></svg>
+                                            <svg class="w-12 h-12 text-purple-600" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+                                            </svg>
+                                        @elseif($role->name === 'participante' || $role->name === 'usuario')
+                                            <svg class="w-12 h-12 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+                                            </svg>
+                                        @elseif($role->name === 'lider_equipo')
+                                            <svg class="w-12 h-12 text-amber-600" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                            </svg>
+                                        @elseif($role->name === 'juez')
+                                            <svg class="w-12 h-12 text-red-600" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                            </svg>
                                         @else
-                                            <svg class="w-10 h-10 text-gray-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+                                            <svg class="w-12 h-12 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                            </svg>
                                         @endif
                                     </div>
 
