@@ -41,8 +41,15 @@
 
             <!-- Menú Desktop -->
             <div class="hidden lg:flex items-center gap-10">
-                <a href="{{ route('eventos.index') }}" class="font-medium hover:text-purple-600 transition">Eventos</a>
-                <a href="{{ route('equipos.index') }}" class="font-medium hover:text-purple-600 transition">Equipos</a>
+                @auth
+                    @if(!auth()->user()->esJuez())
+                        <a href="{{ route('eventos.index') }}" class="font-medium hover:text-purple-600 transition">Eventos</a>
+                        <a href="{{ route('equipos.index') }}" class="font-medium hover:text-purple-600 transition">Equipos</a>
+                    @endif
+                @else
+                    <a href="{{ route('eventos.index') }}" class="font-medium hover:text-purple-600 transition">Eventos</a>
+                    <a href="{{ route('equipos.index') }}" class="font-medium hover:text-purple-600 transition">Equipos</a>
+                @endauth
             </div>
 
             <!-- Auth + Menú móvil -->
@@ -73,7 +80,13 @@
                                 <p class="text-sm text-gray-600">Conectado como</p>
                                 <p class="font-bold text-lg">{{ auth()->user()->name }}</p>
                             </div>
-                            <a href="{{ route('dashboard') }}" class="block px-6 py-3 hover:bg-purple-50 transition">Mi Panel</a>
+                            @if(auth()->user()->esJuez())
+                                <a href="{{ route('juez.panel') }}" class="block px-6 py-3 hover:bg-orange-50 transition font-semibold text-orange-600">
+                                    Panel de Juez
+                                </a>
+                            @else
+                                <a href="{{ route('dashboard') }}" class="block px-6 py-3 hover:bg-purple-50 transition">Mi Panel</a>
+                            @endif
                             <a href="{{ route('profile.edit') }}" class="block px-6 py-3 hover:bg-purple-50 transition">Editar Perfil</a>
                             <hr class="border-gray-200">
                             <form method="POST" action="{{ route('logout') }}">
@@ -117,9 +130,15 @@
             </div>
 
             <nav class="px-6 pb-8 space-y-1">
-                <a href="{{ route('eventos.index') }}" @click="mobileMenuOpen = false" class="block py-4 px-6 text-lg font-medium rounded-xl hover:bg-purple-50 transition">Eventos</a>
-                <a href="{{ route('equipos.index') }}" @click="mobileMenuOpen = false" class="block py-4 px-6 text-lg font-medium rounded-xl hover:bg-purple-50 transition">Equipos</a>
-               
+                @auth
+                    @if(!auth()->user()->esJuez())
+                        <a href="{{ route('eventos.index') }}" @click="mobileMenuOpen = false" class="block py-4 px-6 text-lg font-medium rounded-xl hover:bg-purple-50 transition">Eventos</a>
+                        <a href="{{ route('equipos.index') }}" @click="mobileMenuOpen = false" class="block py-4 px-6 text-lg font-medium rounded-xl hover:bg-purple-50 transition">Equipos</a>
+                    @endif
+                @else
+                    <a href="{{ route('eventos.index') }}" @click="mobileMenuOpen = false" class="block py-4 px-6 text-lg font-medium rounded-xl hover:bg-purple-50 transition">Eventos</a>
+                    <a href="{{ route('equipos.index') }}" @click="mobileMenuOpen = false" class="block py-4 px-6 text-lg font-medium rounded-xl hover:bg-purple-50 transition">Equipos</a>
+                @endauth
 
                 <div class="border-t border-gray-200 pt-6 mt-4">
                     @guest
@@ -128,9 +147,15 @@
                             Crear cuenta gratis
                         </a>
                     @else
-                        <a href="{{ route('dashboard') }}" @click="mobileMenuOpen = false" class="block w-full text-center py-4 bg-purple-100 text-purple-700 font-bold rounded-xl">
-                            Ir al Panel
-                        </a>
+                        @if(auth()->user()->esJuez())
+                            <a href="{{ route('juez.panel') }}" @click="mobileMenuOpen = false" class="block w-full text-center py-4 bg-orange-100 text-orange-700 font-bold rounded-xl">
+                                Panel de Juez
+                            </a>
+                        @else
+                            <a href="{{ route('dashboard') }}" @click="mobileMenuOpen = false" class="block w-full text-center py-4 bg-purple-100 text-purple-700 font-bold rounded-xl">
+                                Ir al Panel
+                            </a>
+                        @endif
                     @endguest
                 </div>
             </nav>

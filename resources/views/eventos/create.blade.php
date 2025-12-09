@@ -139,6 +139,51 @@
                     </div>
                 </div>
 
+                <!-- Selección de Jueces -->
+                <div class="border-t-2 border-purple-100 pt-8">
+                    <h3 class="text-2xl font-black text-gray-900 mb-6">Asignar Jueces al Evento</h3>
+
+                    @if($jueces->count() > 0)
+                        <div x-data="{ selectedJueces: [] }" class="space-y-4">
+                            <p class="text-gray-600 mb-4">Selecciona los jueces que evaluarán este evento:</p>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-96 overflow-y-auto p-4 bg-gray-50 rounded-2xl">
+                                @foreach($jueces as $juez)
+                                    <label class="flex items-center space-x-4 p-4 bg-white rounded-xl border-2 border-gray-200 hover:border-purple-400 cursor-pointer transition-all hover:shadow-lg">
+                                        <input type="checkbox" name="jueces[]" value="{{ $juez->id }}"
+                                               class="w-5 h-5 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                                               {{ in_array($juez->id, old('jueces', [])) ? 'checked' : '' }}>
+                                        <div class="flex-1">
+                                            <div class="flex items-center space-x-3">
+                                                @if($juez->foto_perfil)
+                                                    <img src="{{ asset('storage/' . $juez->foto_perfil) }}"
+                                                         alt="{{ $juez->name }}"
+                                                         class="w-10 h-10 rounded-full object-cover">
+                                                @else
+                                                    <div class="w-10 h-10 rounded-full bg-gradient-to-r from-purple-400 to-pink-400 flex items-center justify-center">
+                                                        <span class="text-white font-bold text-sm">{{ substr($juez->name, 0, 1) }}</span>
+                                                    </div>
+                                                @endif
+                                                <div>
+                                                    <p class="font-bold text-gray-900">{{ $juez->name }}</p>
+                                                    @if($juez->especialidad)
+                                                        <p class="text-xs text-gray-500 capitalize">{{ str_replace('_', ' ', $juez->especialidad) }}</p>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </label>
+                                @endforeach
+                            </div>
+                        </div>
+                    @else
+                        <div class="bg-yellow-50 border-2 border-yellow-200 rounded-2xl p-6">
+                            <p class="text-yellow-800 font-semibold">No hay jueces registrados en el sistema.</p>
+                            <p class="text-yellow-700 text-sm mt-2">Puedes crear jueces desde el panel de administración.</p>
+                        </div>
+                    @endif
+                </div>
+
                 <!-- Botones -->
                 <div class="pt-10 border-t-2 border-purple-100 flex flex-col sm:flex-row gap-6">
                     <button type="submit"

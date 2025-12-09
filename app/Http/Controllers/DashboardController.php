@@ -14,6 +14,11 @@ class DashboardController extends Controller
             return redirect()->route('filament.admin.index');
         }
 
+        // Redirigir jueces a su panel
+        if ($user->esJuez()) {
+            return redirect()->route('juez.panel');
+        }
+
         $misEquipos = $user->participantes()->with('equipo.evento')->get();
 
         return view('dashboard', compact('misEquipos'));

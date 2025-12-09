@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Evento;
+use App\Models\User;
+use App\Models\Juez;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
@@ -41,7 +43,9 @@ class EventController extends Controller
 
     public function create()
     {
-        return view('eventos.create');
+        // Obtener todos los usuarios con rol de juez
+        $jueces = User::role('juez')->get();
+        return view('eventos.create', compact('jueces'));
     }
 
     public function store(Request $request)
@@ -54,6 +58,8 @@ class EventController extends Controller
             'max_miembros' => 'nullable|integer|min:1',
             'estado' => 'required|in:inscripcion,en_curso,finalizado',
             'banner' => 'nullable|image|max:4096',
+            'jueces' => 'nullable|array',
+            'jueces.*' => 'exists:users,id',
         ]);
 
         if ($request->hasFile('banner')) {
@@ -69,6 +75,17 @@ class EventController extends Controller
         }
 
         $evento = Evento::create($data);
+
+        // Asignar jueces al evento
+        if ($request->has('jueces')) {
+            foreach ($request->jueces as $juezId) {
+                Juez::create([
+                    'user_id' => $juezId,
+                    'evento_id' => $evento->id,
+                    'activo' => true,
+                ]);
+            }
+        }
 
         return redirect()->route('eventos.show', $evento)->with('success', 'Evento creado correctamente');
     }

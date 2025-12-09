@@ -21,6 +21,11 @@ class ParticipanteController extends Controller
                     ->orWhere('email', $request->buscar)
                     ->firstOrFail();
 
+        // Prevenir que los jueces se unan a equipos
+        if ($usuario->esJuez()) {
+            return back()->withErrors(['buscar' => 'Los jueces no pueden ser miembros de equipos']);
+        }
+
         if ($equipo->participantes()->where('user_id', $usuario->getKey())->exists()) {
             return back()->withErrors(['buscar' => 'Este usuario ya está en el equipo']);
         }

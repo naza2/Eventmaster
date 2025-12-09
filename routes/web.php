@@ -9,6 +9,8 @@ use App\Http\Controllers\AvanceController;
 use App\Http\Controllers\ParticipanteController;
 use App\Http\Controllers\AsesoriaController;
 use App\Http\Controllers\JuezController;
+use App\Http\Controllers\JuezPanelController;
+use App\Http\Controllers\VotoController;
 use App\Http\Controllers\CalificacionController;
 use App\Http\Controllers\GanadorController;
 use App\Http\Controllers\ConstanciaController;
@@ -132,6 +134,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     | JUECES Y CALIFICACIONES (solo jueces o admin)
     |--------------------------------------------------------------------------
     */
+    // Panel del juez
+    Route::get('/juez/panel', [JuezPanelController::class, 'index'])
+        ->name('juez.panel')
+        ->middleware('role:juez');
+
+    // Calificaciones por criterios
     Route::get('/calificar/{equipo}', [CalificacionController::class, 'create'])
         ->name('calificar.create')
         ->middleware('can:calificar,equipo');
@@ -139,6 +147,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/calificar/{equipo}', [CalificacionController::class, 'store'])
         ->name('calificar.store')
         ->middleware('can:calificar,equipo');
+
+    // Votación por puestos (1°, 2°, 3°)
+    Route::get('/evento/{evento}/votar', [VotoController::class, 'create'])
+        ->name('votos.create')
+        ->middleware('role:juez');
+
+    Route::post('/evento/{evento}/votar', [VotoController::class, 'store'])
+        ->name('votos.store')
+        ->middleware('role:juez');
 
     /*
     |-------------------------------------------------------------------------

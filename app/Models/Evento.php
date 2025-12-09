@@ -37,6 +37,11 @@ class Evento extends Model
         return $this->hasMany(Ganador::class);
     }
 
+    public function votos(): HasMany
+    {
+        return $this->hasMany(Voto::class);
+    }
+
     public function scopeActivo($query)
     {
         return $query->whereIn('estado', ['inscripcion', 'en_curso']);
