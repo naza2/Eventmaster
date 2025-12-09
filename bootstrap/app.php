@@ -1,5 +1,6 @@
 <?php
 
+
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -7,6 +8,7 @@ use Spatie\Permission\Middleware\RoleMiddleware;
 use Spatie\Permission\Middleware\PermissionMiddleware;
 use Spatie\Permission\Middleware\RoleOrPermissionMiddleware;
 use App\Http\Middleware\EnsureJuezHasEspecialidad;
+use Illuminate\Http\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -21,7 +23,11 @@ return Application::configure(basePath: dirname(__DIR__))
             'role_or_permission' => RoleOrPermissionMiddleware::class,
             'juez.especialidad' => EnsureJuezHasEspecialidad::class,
         ]);
+        $middleware->trustProxies(at: '*');
 
+        $middleware->trustProxies(
+            headers: Request::HEADER_X_FORWARDED_FOR |Request::HEADER_X_FORWARDED_HOST |Request::HEADER_X_FORWARDED_PORT |Request::HEADER_X_FORWARDED_PROTO
+        );
         // Agregar middleware global para web
         $middleware->web(append: [
             EnsureJuezHasEspecialidad::class,
