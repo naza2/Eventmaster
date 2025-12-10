@@ -83,6 +83,10 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
                             </svg>
                         </a>
+                    @elseif($evento->estado === 'finalizado')
+                        <div class="mt-8 px-10 py-5 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-black text-xl rounded-3xl shadow-2xl text-center">
+                            🏆 Evento Finalizado
+                        </div>
                     @endif
                 @else
                     <a href="{{ route('login') }}"
@@ -117,12 +121,14 @@
                             <h2 class="text-3xl font-black text-gray-900">
                                 Equipos ({{ $evento->equipos_count ?? 0 }})
                             </h2>
-                            @can('create', \App\Models\Equipo::class)
-                                <a href="{{ route('equipo.create', $evento) }}"
-                                   class="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-xl hover:shadow-xl transition">
-                                    + Crear equipo
-                                </a>
-                            @endcan
+                            @if($evento->estado === 'inscripcion')
+                                @can('create', \App\Models\Equipo::class)
+                                    <a href="{{ route('equipo.create', $evento) }}"
+                                       class="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-xl hover:shadow-xl transition">
+                                        + Crear equipo
+                                    </a>
+                                @endcan
+                            @endif
                         </div>
 
                         @if($evento->equipos->count() > 0)
@@ -170,7 +176,84 @@
                             </div>
                         @endif
                     </div>
+                    <!-- Ganadores del Evento -->
+                    @if($evento->estado === 'finalizado' && $evento->ganadores->count() > 0)
+                        <div class="bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 rounded-3xl shadow-2xl p-8 border-4 border-yellow-400 mt-10">
+                            <div class="text-center mb-8">
+                                <h2 class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 via-orange-600 to-pink-600 mb-3">
+                                    🏆 Ganadores del Evento
+                                </h2>
+                                <p class="text-gray-600 font-medium">¡Felicitaciones a los equipos ganadores!</p>
+                            </div>
+
+                            <div class="space-y-6">
+                                @foreach($evento->ganadores->sortBy('posicion') as $ganador)
+                                    <a href="{{ route('equipos.show', $ganador->equipo) }}"
+                                       class="group block bg-white rounded-2xl p-6 hover:shadow-2xl transition-all duration-300 border-2
+                                              @if($ganador->posicion == 1) border-yellow-400 @elseif($ganador->posicion == 2) border-gray-400 @else border-orange-400 @endif">
+                                        <div class="flex items-center gap-6">
+                                            <!-- Medalla -->
+                                            <div class="flex-shrink-0">
+                                                @if($ganador->posicion == 1)
+                                                    <div class="w-20 h-20 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center text-4xl font-black text-white shadow-xl ring-4 ring-yellow-200">
+                                                        1°
+                                                    </div>
+                                                @elseif($ganador->posicion == 2)
+                                                    <div class="w-20 h-20 bg-gradient-to-br from-gray-300 to-gray-500 rounded-full flex items-center justify-center text-4xl font-black text-white shadow-xl ring-4 ring-gray-200">
+                                                        2°
+                                                    </div>
+                                                @elseif($ganador->posicion == 3)
+                                                    <div class="w-20 h-20 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center text-4xl font-black text-white shadow-xl ring-4 ring-orange-200">
+                                                        3°
+                                                    </div>
+                                                @endif
+                                            </div>
+
+                                            <!-- Info del equipo -->
+                                            <div class="flex-1">
+                                                <h3 class="text-2xl font-black text-gray-900 group-hover:text-indigo-600 transition mb-2">
+                                                    {{ $ganador->equipo->nombre_equipo }}
+                                                </h3>
+                                                <p class="text-lg text-indigo-600 font-bold mb-3">
+                                                    {{ $ganador->equipo->nombre_proyecto }}
+                                                </p>
+                                                @if($ganador->premio)
+                                                    <p class="text-emerald-600 font-bold">
+                                                        🎁 Premio: {{ $ganador->premio }}
+                                                    </p>
+                                                @endif
+                                                @if($ganador->comentario_jurado)
+                                                    <p class="text-gray-600 mt-2 italic">
+                                                        "{{ $ganador->comentario_jurado }}"
+                                                    </p>
+                                                @endif
+                                            </div>
+
+                                            <!-- Miembros -->
+                                            <div class="text-right">
+                                                <p class="text-sm text-gray-500 mb-2">Miembros:</p>
+                                                <div class="flex -space-x-3">
+                                                    @foreach($ganador->equipo->participantes->take(4) as $participante)
+                                                        <img src="{{ $participante->user->foto_perfil ? Storage::url($participante->user->foto_perfil) : asset('images/avatar.png') }}"
+                                                             alt="{{ $participante->user->name }}"
+                                                             class="w-10 h-10 rounded-full ring-2 ring-white"
+                                                             title="{{ $participante->user->name }}">
+                                                    @endforeach
+                                                    @if($ganador->equipo->participantes->count() > 4)
+                                                        <div class="w-10 h-10 rounded-full ring-2 ring-white bg-gray-300 flex items-center justify-center text-xs font-bold text-gray-700">
+                                                            +{{ $ganador->equipo->participantes->count() - 4 }}
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
                 </div>
+
 
                 <!-- Sidebar -->
                 <div class="space-y-8">
@@ -208,9 +291,13 @@
                                       rounded-3xl shadow-2xl hover:shadow-emerald-500/50 transform hover:scale-105 transition-all duration-300">
                                 Inscribir mi equipo ahora
                             </a>
+                        @elseif($evento->estado === 'en_curso')
+                            <div class="text-center px-10 py-8 bg-amber-100 border-2 border-amber-400 text-amber-800 font-black text-xl rounded-3xl">
+                                ⚡ Evento en Curso
+                            </div>
                         @else
-                            <div class="text-center px-10 py-8 bg-gray-200 text-gray-700 font-black text-xl rounded-3xl">
-                                Inscripciones cerradas
+                            <div class="text-center px-10 py-8 bg-purple-100 border-2 border-purple-400 text-purple-800 font-black text-xl rounded-3xl">
+                                🏆 Evento Finalizado
                             </div>
                         @endif
                     @else

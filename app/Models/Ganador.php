@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Ganador extends Model
 {
+    protected $table = 'ganadores';
+
     protected $fillable = [
         'evento_id', 'equipo_id', 'posicion', 'premio',
         'comentario_jurado', 'fecha_certificado', 'certificado_enviado'

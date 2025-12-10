@@ -181,6 +181,40 @@
                         </div>
                     </div>
 
+                    <!-- Sección de Jueces -->
+                    <div class="pt-10 border-t-2 border-purple-100">
+                        <h3 class="text-2xl font-black text-gray-900 mb-6">Jueces Asignados</h3>
+                        <div class="space-y-4">
+                            @if($jueces->count() > 0)
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    @foreach($jueces as $juez)
+                                        <label class="flex items-center gap-3 p-4 border-2 border-gray-200 rounded-xl hover:border-purple-400 cursor-pointer transition-all">
+                                            <input type="checkbox"
+                                                   name="jueces[]"
+                                                   value="{{ $juez->id }}"
+                                                   {{ in_array($juez->id, $juecesAsignados) ? 'checked' : '' }}
+                                                   class="w-5 h-5 text-purple-600 rounded focus:ring-purple-500">
+                                            <div class="flex-1">
+                                                <p class="font-bold text-gray-900">{{ $juez->name }}</p>
+                                                <p class="text-sm text-gray-600">{{ $juez->email }}</p>
+                                                @if($juez->especialidad)
+                                                    <p class="text-xs text-purple-600 mt-1 capitalize">
+                                                        {{ str_replace('_', ' ', $juez->especialidad) }}
+                                                    </p>
+                                                @endif
+                                            </div>
+                                        </label>
+                                    @endforeach
+                                </div>
+                            @else
+                                <div class="text-center py-8 bg-gray-50 rounded-2xl">
+                                    <p class="text-gray-600 font-medium">No hay jueces disponibles en el sistema</p>
+                                    <p class="text-sm text-gray-500 mt-2">Primero debes crear usuarios con rol de juez</p>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+
 <div class="pt-10 border-t-2 border-purple-100 flex flex-col sm:flex-row gap-5">
     <button type="submit"
             class="flex-1 px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600

@@ -1,0 +1,12 @@
+@startuml
+title Anexo D - Envío de Proyectos y Avances
+start
+ :Equipo crea `Proyecto`;
+ :Añadir `Repositorio` (github/demo/video);
+ :Subir Avance (creación de `Avance`);
+ loop Múltiples avances
+   :Registrar Avance (archivo, descripción, fecha);
+ end
+ :Marcar entrega final / enviar para evaluación;
+stop
+@enduml

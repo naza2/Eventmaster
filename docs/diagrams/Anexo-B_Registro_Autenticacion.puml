@@ -1,0 +1,14 @@
+@startuml
+title Anexo B - Registro y Autenticación
+start
+ :Usuario visita página de registro;
+ :Completar formulario (nombre, email, contraseña);
+ :Crear cuenta (User); 
+ if (¿Confirmación por email?) then (sí)
+   :Enviar email de verificación;
+   :Usuario confirma email;
+ endif
+ :Usuario inicia sesión;
+ :Completar perfil (opcional: rol = participante | juez | organizador);
+stop
+@enduml

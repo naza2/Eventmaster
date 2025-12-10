@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Asesoria extends Model
 {
+    protected $table = 'asesorias';
+
     protected $fillable = ['equipo_id', 'user_id', 'aprobado', 'comentarios'];
 
     protected $casts = ['aprobado' => 'boolean'];

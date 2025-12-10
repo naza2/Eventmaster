@@ -37,7 +37,7 @@ class EventController extends Controller
 
     public function show(Evento $evento)
     {
-        $evento->load(['equipos.participantes.user', 'jueces.user']);
+        $evento->load(['equipos.participantes.user', 'jueces.user', 'ganadores.equipo']);
         return view('eventos.show', compact('evento'));
     }
 

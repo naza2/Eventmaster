@@ -1,0 +1,20 @@
+@startuml
+title Anexo A - Ciclo de vida del Evento
+|Organizador|
+start
+ :Crear Evento (título, fechas, categorías);
+ :Configurar inscripciones y cupos;
+ if (¿Publicar inscripciones?) then (sí)
+   :Abrir inscripciones;
+ else (no)
+   :Guardar borrador;
+ endif
+ :Registrar Participantes / Equipos;
+ :Asignar Jueces y Roles;
+ :Periodo de trabajo (envío de avances);
+ :Evaluaciones por Jueces;
+ :Cierre del Evento;
+ :Calcular resultados y Ganadores;
+ :Enviar notificaciones (correo);
+stop
+@enduml

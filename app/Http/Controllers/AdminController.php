@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Evento;
+use App\Models\Juez;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -136,7 +137,16 @@ class AdminController extends Controller
 
     public function eventosEdit(Evento $evento)
     {
-        return view('admin.eventos.edit', compact('evento'));
+        // Cargar los jueces actuales del evento
+        $evento->load('jueces.user');
+
+        // Obtener todos los usuarios con rol de juez
+        $jueces = User::role('juez')->get();
+
+        // Obtener los IDs de los jueces asignados al evento
+        $juecesAsignados = $evento->jueces->pluck('user_id')->toArray();
+
+        return view('admin.eventos.edit', compact('evento', 'jueces', 'juecesAsignados'));
     }
 
     public function eventosStore(EventoStoreRequest $request)
@@ -188,6 +198,24 @@ class AdminController extends Controller
         }
 
         $evento->save();
+
+        // Sincronizar jueces asignados al evento
+        if ($request->has('jueces')) {
+            // Eliminar jueces actuales
+            Juez::where('evento_id', $evento->id)->delete();
+
+            // Agregar nuevos jueces
+            foreach ($request->jueces as $juezId) {
+                Juez::create([
+                    'user_id' => $juezId,
+                    'evento_id' => $evento->id,
+                    'activo' => true,
+                ]);
+            }
+        } else {
+            // Si no se enviaron jueces, eliminar todos
+            Juez::where('evento_id', $evento->id)->delete();
+        }
 
         return redirect()->route('admin.eventos.show', $evento)
             ->with('success', 'Evento actualizado correctamente');

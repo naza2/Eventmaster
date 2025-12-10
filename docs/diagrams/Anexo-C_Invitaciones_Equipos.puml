@@ -1,0 +1,17 @@
+@startuml
+title Anexo C - Invitaciones y Gestión de Equipos
+start
+ :Líder de equipo crea equipo o elige uno existente;
+ :Líder envía invitación a participante (email);
+ :Generar registro `Invitacion` en BD;
+ -> Invitado: Recibe email con enlace
+ if (Invitado acepta?) then (sí)
+   :Marcar invitación como aceptada;
+   :Agregar usuario al `Equipo`;
+   :Notificar al líder (email `InvitacionEquipoMail`);
+ else (rechaza)
+   :Marcar invitación como rechazada;
+   :Enviar `InvitacionRechazadaMail` al líder;
+ endif
+stop
+@enduml

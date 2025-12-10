@@ -1,0 +1,16 @@
+@startuml
+title Anexo E - Evaluación y Votación
+start
+ :Juez inicia sesión y accede a asignaciones;
+ :Revisar Proyectos/Avances asignados;
+ :Agregar `Calificacion` (por criterios) y/o `Voto`;
+ :Guardar valoración en BD;
+ if (Todas las evaluaciones completas?) then (sí)
+   :Calcular puntajes agregados;
+   :Seleccionar Ganadores (`Ganador`);
+   :Enviar correo de resultados (Equipo/Ganador);
+ else (no)
+   :Esperar evaluaciones restantes;
+ endif
+stop
+@enduml

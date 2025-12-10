@@ -66,6 +66,35 @@
         </div>
     </div>
 </section>
+<!-- BANNER DE CELEBRACIÓN SI ES GANADOR -->
+@if($esGanador)
+    <div class="bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 py-8">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex items-center justify-center gap-6 text-white">
+                <div class="text-6xl animate-bounce">🏆</div>
+                <div class="text-center">
+                    <h2 class="text-4xl font-black mb-2">
+                        ¡FELICIDADES! Lugar #{{ $esGanador->posicion }}
+                    </h2>
+                    <p class="text-xl font-bold">
+                        @if($esGanador->posicion == 1)
+                            🥇 Primer Lugar
+                        @elseif($esGanador->posicion == 2)
+                            🥈 Segundo Lugar
+                        @elseif($esGanador->posicion == 3)
+                            🥉 Tercer Lugar
+                        @endif
+                    </p>
+                    @if($esGanador->premio)
+                        <p class="text-lg mt-2">🎁 Premio: {{ $esGanador->premio }}</p>
+                    @endif
+                </div>
+                <div class="text-6xl animate-bounce">🎉</div>
+            </div>
+        </div>
+    </div>
+@endif
+
 
 <!-- DASHBOARD DEL EQUIPO -->
 <section class="py-20 bg-gray-50">
@@ -89,31 +118,68 @@
                 <div id="miembros" class="bg-white rounded-3xl shadow-xl p-10">
                     <div class="flex items-center justify-between mb-10">
                         <h2 class="text-4xl font-black text-gray-900">Miembros del equipo</h2>
-                        @can('invite', $equipo)
-                            <a href="{{ route('equipos.invitar', $equipo) }}" class="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-xl hover:shadow-xl transition">
-                                + Invitar miembro
-                            </a>
-                        @endcan
+                        @if($equipo->evento->estado !== 'finalizado')
+                            @can('invite', $equipo)
+                                <a href="{{ route('equipos.invitar', $equipo) }}" class="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-xl hover:shadow-xl transition">
+                                    + Invitar miembro
+                                </a>
+                            @endcan
+                        @endif
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         @foreach($equipo->participantes as $miembro)
                             <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-8 hover:shadow-2xl transition-all duration-300 border border-gray-200">
-                                <div class="flex items-center gap-6">
+                                <div class="flex items-start gap-6">
                                     <img src="{{ $miembro->user->foto_perfil ? Storage::url($miembro->user->foto_perfil) : asset('images/avatar.png') }}"
                                          alt="{{ $miembro->user->name }}"
-                                         class="w-20 h-20 rounded-2xl object-cover ring-4 ring-white shadow-xl">
+                                         class="w-24 h-24 rounded-2xl object-cover ring-4 ring-white shadow-xl">
 
                                     <div class="flex-1">
-                                        <div class="flex items-center gap-3 mb-2">
+                                        <div class="flex items-center gap-3 mb-3">
                                             <h3 class="text-2xl font-black text-gray-900">{{ $miembro->user->name }}</h3>
                                             @if($miembro->es_lider)
                                                 <span class="px-4 py-1 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs font-bold rounded-full">LÍDER</span>
                                             @endif
                                         </div>
-                                        <p class="text-indigo-600 font-bold">{{ ucfirst(str_replace('_', ' ', $miembro->rol)) }}</p>
-                                        <p class="text-gray-600">{{ $miembro->user->carrera?->nombre ?? 'Sin carrera' }}</p>
-                                        <p class="text-sm text-gray-500">{{ $miembro->num_control }}</p>
+                                        
+                                        <div class="space-y-2 mb-4">
+                                            <p class="text-indigo-600 font-bold text-lg">
+                                                {{ ucfirst(str_replace('_', ' ', $miembro->rol)) }}
+                                            </p>
+                                            <p class="text-gray-700 font-medium">
+                                                {{ $miembro->user->carrera?->nombre ?? 'Sin carrera' }}
+                                            </p>
+                                        </div>
+
+                                        <div class="space-y-1 text-sm">
+                                            @if($miembro->user->matricula)
+                                                <div class="flex items-center gap-2 text-gray-600">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"/>
+                                                    </svg>
+                                                    <span>{{ $miembro->user->matricula }}</span>
+                                                </div>
+                                            @endif
+                                            
+                                            @if($miembro->user->email)
+                                                <div class="flex items-center gap-2 text-gray-600">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                                    </svg>
+                                                    <span class="truncate">{{ $miembro->user->email }}</span>
+                                                </div>
+                                            @endif
+
+                                            @if($miembro->user->telefono)
+                                                <div class="flex items-center gap-2 text-gray-600">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                                                    </svg>
+                                                    <span>{{ $miembro->user->telefono }}</span>
+                                                </div>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -167,12 +233,14 @@
                 <div id="avances" class="bg-white rounded-3xl shadow-xl p-10">
                     <div class="flex items-center justify-between mb-10">
                         <h2 class="text-4xl font-black text-gray-900">Avances del proyecto</h2>
-                        @can('update', $equipo)
-                            <button @click="open = true"
-                                    class="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-xl hover:shadow-xl transition">
-                                + Publicar avance
-                            </button>
-                        @endcan
+                        @if($equipo->evento->estado !== 'finalizado')
+                            @can('update', $equipo)
+                                <button @click="open = true"
+                                        class="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-xl hover:shadow-xl transition">
+                                    + Publicar avance
+                                </button>
+                            @endcan
+                        @endif
                     </div>
 
                     @if($equipo->proyecto && $equipo->proyecto->avances()->count() > 0)
@@ -242,6 +310,44 @@
                     </div>
                 </div>
 
+                <!-- CALIFICACIONES -->
+                @if($equipo->calificaciones->count() > 0 || $promedioCalificacion)
+                    <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-3xl shadow-xl p-8 border-2 border-purple-200">
+                        <h3 class="text-2xl font-black text-gray-900 mb-6">Calificaciones</h3>
+
+                        @if($promedioCalificacion)
+                            <div class="text-center mb-6 pb-6 border-b-2 border-purple-200">
+                                <p class="text-sm text-gray-600 font-bold uppercase mb-2">Promedio General</p>
+                                <p class="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">
+                                    {{ number_format($promedioCalificacion, 1) }}
+                                </p>
+                                <p class="text-gray-500 text-sm mt-1">de 100 puntos</p>
+                            </div>
+                        @endif
+
+                        @if($equipo->calificaciones->count() > 0)
+                            <div class="space-y-3">
+                                <p class="text-sm text-gray-600 font-bold uppercase mb-3">Por criterio:</p>
+                                @foreach($equipo->calificaciones->groupBy('criterio.nombre') as $criterio => $calificaciones)
+                                    <div class="bg-white rounded-xl p-4">
+                                        <div class="flex items-center justify-between">
+                                            <p class="text-sm font-bold text-gray-700">{{ $criterio }}</p>
+                                            <p class="text-2xl font-black text-purple-600">
+                                                {{ number_format($calificaciones->avg('puntuacion'), 1) }}
+                                            </p>
+                                        </div>
+                                        <div class="mt-2 bg-gray-200 rounded-full h-2">
+                                            <div class="bg-gradient-to-r from-purple-500 to-pink-500 rounded-full h-2"
+                                                 style="width: {{ ($calificaciones->avg('puntuacion') / 100) * 100 }}%"></div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
+                @endif
+
+
                 <!-- ASESORÍA -->
                 <div id="asesoria" class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-3xl shadow-xl p-8 border border-blue-100">
                     <h3 class="text-2xl font-black text-gray-900 mb-6">Asesoría técnica</h3>
@@ -260,11 +366,13 @@
                                 No tienes asesor asignado aún
                             @endif
                         </p>
-                        @can('update', $equipo)
-                            <button class="mt-6 w-full px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-xl hover:shadow-xl transition">
-                                Solicitar asesor
-                            </button>
-                        @endcan
+                        @if($equipo->evento->estado !== 'finalizado')
+                            @can('update', $equipo)
+                                <button class="mt-6 w-full px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-xl hover:shadow-xl transition">
+                                    Solicitar asesor
+                                </button>
+                            @endcan
+                        @endif
                     @endif
                 </div>
 

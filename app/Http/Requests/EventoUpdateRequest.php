@@ -30,6 +30,8 @@ class EventoUpdateRequest extends FormRequest
             'estado' => 'required|in:inscripcion,en_curso,calificacion,finalizado',
             'banner' => 'nullable|image|mimes:jpg,jpeg,png,webp,gif|max:4096',
             'banner_url' => 'nullable|url|starts_with:https://,http://',
+            'jueces' => 'nullable|array',
+            'jueces.*' => 'exists:users,id',
         ];
     }
 

@@ -37,6 +37,25 @@
                     </p>
                     <p class="text-xl opacity-90 mt-2">Proyectos como dev</p>
                 </div>
+                @php
+                    $premiosGanados = auth()->user()->participantes()
+                        ->with('equipo.evento.ganadores')
+                        ->get()
+                        ->filter(function($p) {
+                            return $p->equipo->evento->ganadores
+                                ->where('equipo_id', $p->equipo_id)
+                                ->isNotEmpty();
+                        })
+                        ->count();
+                @endphp
+                @if($premiosGanados > 0)
+                    <div class="bg-gradient-to-br from-yellow-400 to-orange-500 backdrop-blur-xl rounded-3xl px-10 py-8 shadow-2xl border-4 border-yellow-300 ring-4 ring-white/50">
+                        <p class="text-6xl font-black text-white">
+                            🏆 {{ $premiosGanados }}
+                        </p>
+                        <p class="text-xl text-white font-bold mt-2">{{ Str::plural('Premio ganado', $premiosGanados) }}</p>
+                    </div>
+                @endif
             </div>
         </div>
     </section>
@@ -67,7 +86,7 @@
 
             @if(auth()->user()->participantes()->count() > 0)
                 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
-                    @foreach(auth()->user()->participantes()->with('equipo.evento')->latest()->get() as $participante)
+                    @foreach(auth()->user()->participantes()->with('equipo.evento.ganadores')->latest()->get() as $participante)
                         @php
                             $equipo = $participante->equipo;
                             $evento = $equipo->evento;
@@ -87,6 +106,31 @@
                                 @endif
 
                                 <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+
+                                <!-- Banner de Ganador (si aplica) -->
+                                @php
+                                    $ganador = $evento->ganadores->where('equipo_id', $equipo->id)->first();
+                                @endphp
+                                
+                                @if($ganador)
+                                    <div class="absolute top-0 left-0 right-0 bg-gradient-to-r from-yellow-400 via-yellow-500 to-orange-500 py-3 px-6">
+                                        <div class="flex items-center justify-center gap-3 text-white">
+                                            <span class="text-2xl animate-bounce">
+                                                @if($ganador->posicion == 1) 🥇
+                                                @elseif($ganador->posicion == 2) 🥈
+                                                @else 🥉
+                                                @endif
+                                            </span>
+                                            <span class="font-black text-lg">
+                                                @if($ganador->posicion == 1) ¡PRIMER LUGAR!
+                                                @elseif($ganador->posicion == 2) ¡SEGUNDO LUGAR!
+                                                @else ¡TERCER LUGAR!
+                                                @endif
+                                            </span>
+                                            <span class="text-2xl animate-bounce">🎉</span>
+                                        </div>
+                                    </div>
+                                @endif
 
                                 <!-- Estado del evento -->
                                 <div class="absolute top-6 right-6">
@@ -140,6 +184,29 @@
                                             </p>
                                         </div>
                                     </div>
+
+                                    <!-- Badge de Ganador -->
+                                    @php
+                                        $ganador = $evento->ganadores->where('equipo_id', $equipo->id)->first();
+                                    @endphp
+                                    
+                                    @if($ganador)
+                                        <div class="flex items-center gap-3">
+                                            @if($ganador->posicion == 1)
+                                                <div class="px-6 py-3 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white font-black rounded-full text-base shadow-2xl flex items-center gap-2 ring-4 ring-yellow-200">
+                                                    🥇 1° Lugar
+                                                </div>
+                                            @elseif($ganador->posicion == 2)
+                                                <div class="px-6 py-3 bg-gradient-to-r from-gray-300 to-gray-500 text-white font-black rounded-full text-base shadow-2xl flex items-center gap-2 ring-4 ring-gray-200">
+                                                    🥈 2° Lugar
+                                                </div>
+                                            @elseif($ganador->posicion == 3)
+                                                <div class="px-6 py-3 bg-gradient-to-r from-orange-400 to-orange-600 text-white font-black rounded-full text-base shadow-2xl flex items-center gap-2 ring-4 ring-orange-200">
+                                                    🥉 3° Lugar
+                                                </div>
+                                            @endif
+                                        </div>
+                                    @endif
 
                                     @if($participante->es_lider)
                                         <div class="px-5 py-3 bg-gradient-to-r from-yellow-400 to-orange-500 text-white font-black rounded-full text-sm shadow-xl">

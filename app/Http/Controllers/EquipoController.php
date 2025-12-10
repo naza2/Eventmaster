@@ -45,12 +45,20 @@ class EquipoController extends Controller
 
     public function show(Equipo $equipo){
         $equipo->load([
-            'evento',
+            'evento.ganadores',
             'participantes.user.carrera',
             'proyecto.avances.user',
             'proyecto.repositorio',
-            'asesorias.asesor'
+            'asesorias.asesor',
+            'calificaciones.criterio'
         ]);
-        return view('equipos.show', compact('equipo'));
+
+        // Verificar si este equipo es ganador
+        $esGanador = $equipo->evento->ganadores->where('equipo_id', $equipo->id)->first();
+
+        // Calcular promedio de calificaciones
+        $promedioCalificacion = $equipo->calificaciones->avg('puntuacion');
+
+        return view('equipos.show', compact('equipo', 'esGanador', 'promedioCalificacion'));
     }
 }
