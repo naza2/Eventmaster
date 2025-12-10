@@ -39,12 +39,12 @@ class User extends Authenticatable
         $this->attributes['email'] = strtolower($value);
     }
 
-    public function carrera(): BelongsTo
+    public function carrera()
     {
         return $this->belongsTo(Carrera::class);
     }
 
-    public function participantes(): HasMany
+    public function participantes()
     {
         return $this->hasMany(Participante::class);
     }
@@ -74,9 +74,10 @@ class User extends Authenticatable
         return $this->hasMany(Invitacion::class, 'invitado_por');
     }
 
-    public function invitacionesPendientes(): HasMany
+    public function invitacionesPendientes()
     {
-        return $this->invitacionesRecibidas()->where('estado', 'pendiente');
+        return $this->hasMany(Invitacion::class, 'invitado_id')
+        ->where('estado', 'pendiente');
     }
 
     public function esLiderDeEquipo(): bool

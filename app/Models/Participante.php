@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+
 class Participante extends Model
 {
     protected $fillable = [
@@ -15,17 +16,17 @@ class Participante extends Model
         'es_lider' => 'boolean',
     ];
 
-    public function equipo(): BelongsTo
+   public function equipo()
     {
         return $this->belongsTo(Equipo::class);
     }
 
-    public function user(): BelongsTo
+    public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    public function carrera(): BelongsTo
+    public function carrera()
     {
         return $this->belongsTo(Carrera::class);
     }

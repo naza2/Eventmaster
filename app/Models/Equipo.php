@@ -20,9 +20,9 @@ class Equipo extends Model
         return $this->belongsTo(Evento::class);
     }
 
-    public function participantes(): HasMany
+    public function participantes()
     {
-        return $this->hasMany(Participante::class);
+        return $this->hasMany(Participante::class); // ← hasMany, NO belongsToMany
     }
 
     public function proyecto(): HasOne
@@ -48,5 +48,20 @@ class Equipo extends Model
     public function esLider(User $user): bool
     {
         return $this->participantes()->where('user_id', $user->getKey())->where('es_lider', true)->exists();
+    }
+
+    public function asesoriaAprobada()
+    {
+        return $this->hasOne(Asesoria::class)->where('aprobado', true);
+    }
+
+    public function asesoriaPendiente()
+    {
+        return $this->hasOne(Asesoria::class)->where('aprobado', false);
+    }
+
+    public function lider()
+    {
+        return $this->hasOne(Participante::class)->where('rol', 'lider');
     }
 }

@@ -118,6 +118,35 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('equipo', [EquipoController::class, 'store'])->name('equipo.store');
     });
 
+    Route::prefix('equipos/{equipo}')->name('equipos.')->group(function () {
+        Route::get('/miembros',    [EquipoController::class, 'miembros'])->name('miembros');
+        Route::get('/proyecto',    [EquipoController::class, 'proyecto'])->name('proyecto');
+        Route::get('/avances',     [EquipoController::class, 'avances'])->name('avances');
+        Route::get('/repositorio', [EquipoController::class, 'repositorio'])->name('repositorio');
+        Route::get('/asesoria',    [EquipoController::class, 'asesoria'])->name('asesoria');
+    });
+
+    // RUTAS DEL PROYECTO (dentro del grupo auth)
+    Route::prefix('equipos/{equipo}')->name('proyecto.')->group(function () {
+        // Crear proyecto (cuando aún no existe)
+        Route::get('/proyecto/create', [ProyectoController::class, 'create'])
+            ->name('create')
+            ->middleware('can:update,equipo');
+
+        Route::post('/proyecto', [ProyectoController::class, 'store'])
+            ->name('store')
+            ->middleware('can:update,equipo');
+
+        // Editar proyecto (cuando ya existe)
+        Route::get('/proyecto/edit', [ProyectoController::class, 'edit'])
+            ->name('edit')
+            ->middleware('can:update,equipo');
+
+        Route::patch('/proyecto', [ProyectoController::class, 'update'])
+            ->name('update')
+            ->middleware('can:update,equipo');
+    });
+
     Route::get('/equipos/{equipo}', [EquipoController::class, 'show'])->name('equipos.show');
 
     Route::put('/proyecto/{proyecto}', [ProyectoController::class, 'update'])
@@ -134,6 +163,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/asesoria/{asesoria}/aceptar', [AsesoriaController::class, 'aceptar'])
         ->name('asesoria.aceptar');
 
+    Route::get('/equipos/{equipo}/avances/create', [AvanceController::class, 'create'])
+        ->name('avances.create');
+    Route::post('/avances/{equipo}', [AvanceController::class, 'store'])
+        ->name('avances.store');
     /*
     |--------------------------------------------------------------------------
     | JUECES Y CALIFICACIONES

@@ -3,63 +3,86 @@
 @section('title', $equipo->nombre_equipo)
 
 @section('content')
-<!-- HERO DEL EQUIPO -->
+<!-- HERO DEL EQUIPO - Perfecto, limpio y funcionando -->
 <section class="relative h-96 overflow-hidden">
     <div class="absolute inset-0">
+        <!-- Banner del evento (local o URL) -->
         @if($equipo->evento->banner)
-            <img src="{{ Storage::url($equipo->evento->banner) }}" alt="{{ $equipo->evento->nombre }}" class="w-full h-full object-cover">
+            <img src="{{ 
+                filter_var($equipo->evento->banner, FILTER_VALIDATE_URL) 
+                    ? $equipo->evento->banner 
+                    : Storage::url($equipo->evento->banner)
+            }}"
+                 alt="{{ $equipo->evento->nombre }}"
+                 class="w-full h-full object-cover">
         @else
             <div class="w-full h-full bg-gradient-to-br from-indigo-600 via-purple-700 to-pink-600"></div>
         @endif
-        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent pointer-events-none"></div>
+
+        <!-- Overlay oscuro -->
+        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent"></div>
     </div>
 
     <div class="relative max-w-7xl mx-auto px-6 h-full flex items-end pb-16">
         <div class="flex items-end gap-10">
-            <!-- Logo del equipo -->
-            <div class="relative">
-                @if($equipo->logo)
-                    <img src="{{ Storage::url($equipo->logo) }}" alt="{{ $equipo->nombre_equipo }}" class="w-40 h-40 rounded-3xl object-cover ring-8 ring-white/30 shadow-2xl">
-                @else
-                    <div class="w-40 h-40 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-3xl flex items-center justify-center text-white text-6xl font-black ring-8 ring-white/30 shadow-2xl">
-                        {{ Str::upper(substr($equipo->nombre_equipo, 0, 2)) }}
-                    </div>
-                @endif
+            <!-- Logo del equipo (local o URL) -->
+            <div class="relative flex-shrink-0">
+                <div class="w-40 h-40 rounded-3xl overflow-hidden ring-8 ring-white/30 shadow-2xl bg-gradient-to-br from-indigo-600 to-purple-600 
+                            flex items-center justify-center">
+                    @if($equipo->logo)
+                        <img src="{{ 
+                            filter_var($equipo->logo, FILTER_VALIDATE_URL) 
+                                ? $equipo->logo 
+                                : Storage::url($equipo->logo)
+                        }}"
+                             alt="{{ $equipo->nombre_equipo }}"
+                             class="w-full h-full object-cover">
+                    @else
+                        <span class="text-white text-6xl font-black">
+                            {{ Str::upper(substr($equipo->nombre_equipo, 0, 2)) }}
+                        </span>
+                    @endif
+                </div>
 
                 <!-- Estado del equipo -->
                 <div class="absolute -bottom-4 left-1/2 -translate-x-1/2">
-                    <span class="px-6 py-3 rounded-full font-bold text-white shadow-2xl text-lg
-                        @if($equipo->estado === 'aprobado') bg-green-500
-                        @elseif($equipo->estado === 'pendiente') bg-yellow-500
-                        @else bg-red-600 @endif">
+                    <span class="px-6 py-3 rounded-full text-white font-black text-lg shadow-2xl
+                                 {{ $equipo->estado === 'aprobado' ? 'bg-emerald-500' : 
+                                    ($equipo->estado === 'pendiente' ? 'bg-amber-500' : 'bg-red-600') }}">
                         {{ ucfirst($equipo->estado) }}
                     </span>
                 </div>
             </div>
 
-           
-
+            <!-- Información del equipo -->
             <div class="text-white">
-                <h1 class="text-5xl md:text-7xl font-black mb-4">
+                <h1 class="text-5xl md:text-7xl font-black mb-4 leading-tight">
                     {{ $equipo->nombre_equipo }}
                 </h1>
-                <p class="text-3xl font-light mb-6 opacity-90">
-                    <p class="text-3xl font-light mb-6 opacity-90">
+
+                <!-- CORREGIDO: Se eliminó el <p> duplicado -->
+                <p class="text-3xl font-light mb-8 opacity-90">
                     {{ $equipo->nombre_proyecto }}
                 </p>
 
+                <!-- Info rápida -->
                 <div class="flex flex-wrap items-center gap-8 text-lg">
                     <div class="flex items-center gap-3">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
-                        <span>{{ $equipo->evento->nombre }}</span>
+                        <span class="font-bold">{{ $equipo->evento->nombre }}</span>
                     </div>
+
                     <div class="flex items-center gap-3">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
                         </svg>
-                        <span>{{ $equipo->participantes_count ?? 0 }} / {{ $equipo->evento->max_miembros }} miembros</span>
+                        <span class="font-bold">
+                            {{ $equipo->participantes->count() }} / {{ $equipo->evento->max_miembros }} miembros
+                        </span>
                     </div>
                 </div>
             </div>
@@ -99,20 +122,61 @@
 <!-- DASHBOARD DEL EQUIPO -->
 <section class="py-20 bg-gray-50">
     <div class="max-w-7xl mx-auto px-6">
-        <!-- NAVEGACIÓN RÁPIDA -->
-        <div class="bg-white rounded-3xl shadow-xl p-6 mb-12">
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-6 text-center">
-                <a href="#miembros" class="px-6 py-4 bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-bold rounded-2xl hover:shadow-xl transition">Miembros</a>
-                <a href="#proyecto" class="px-6 py-4 bg-white border-2 border-indigo-600 text-indigo-600 font-bold rounded-2xl hover:bg-indigo-50 transition">Proyecto</a>
-                <a href="#avances" class="px-6 py-4 bg-white border-2 border-purple-600 text-purple-600 font-bold rounded-2xl hover:bg-purple-50 transition">Avances</a>
-                <a href="#repositorio" class="px-6 py-4 bg-white border-2 border-green-600 text-green-600 font-bold rounded-2xl hover:bg-green-50 transition">Repositorio</a>
-                <a href="#asesoria" class="px-6 py-4 bg-white border-2 border-orange-600 text-orange-600 font-bold rounded-2xl hover:bg-orange-50 transition">Asesoría</a>
-            </div>
-        </div>
+        <!-- NAVEGACIÓN RÁPIDA - Redirecciona a páginas reales (no anclas) -->
+<div class="bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl p-5 mb-12 border border-white/40">
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
+
+        <!-- Miembros -->
+        <a href="{{ route('equipos.miembros', $equipo) }}"
+           class="px-5 py-4 rounded-2xl font-black text-sm transition-all duration-300
+                  {{ request()->routeIs('equipos.miembros') 
+                      ? 'bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-xl scale-105' 
+                      : 'bg-white border-2 border-indigo-600 text-indigo-600 hover:bg-indigo-50' }}">
+            Miembros
+        </a>
+
+        <!-- Proyecto -->
+        <a href="{{ route('equipos.proyecto', $equipo) }}"
+           class="px-5 py-4 rounded-2xl font-black text-sm transition-all duration-300
+                  {{ request()->routeIs('equipos.proyecto') 
+                      ? 'bg-gradient-to-br from-purple-500 to-pink-600 text-white shadow-xl scale-105' 
+                      : 'bg-white border-2 border-purple-600 text-purple-600 hover:bg-purple-50' }}">
+            Proyecto
+        </a>
+
+        <!-- Avances -->
+        <a href="{{ route('equipos.avances', $equipo) }}"
+           class="px-5 py-4 rounded-2xl font-black text-sm transition-all duration-300
+                  {{ request()->routeIs('equipos.avances') 
+                      ? 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-xl scale-105' 
+                      : 'bg-white border-2 border-emerald-600 text-emerald-600 hover:bg-emerald-50' }}">
+            Avances
+        </a>
+
+        <!-- Repositorio -->
+        <a href="{{ route('equipos.repositorio', $equipo) }}"
+           class="px-5 py-4 rounded-2xl font-black text-sm transition-all duration-300
+                  {{ request()->routeIs('equipos.repositorio') 
+                      ? 'bg-gradient-to-br from-gray-600 to-gray-800 text-white shadow-xl scale-105' 
+                      : 'bg-white border-2 border-gray-600 text-gray-600 hover:bg-gray-100' }}">
+            Repositorio
+        </a>
+
+        <!-- Asesoría -->
+        <a href="{{ route('equipos.asesoria', $equipo) }}"
+           class="px-5 py-4 rounded-2xl font-black text-sm transition-all duration-300
+                  {{ request()->routeIs('equipos.asesoria') 
+                      ? 'bg-gradient-to-br from-orange-500 to-red-600 text-white shadow-xl scale-105' 
+                      : 'bg-white border-2 border-orange-600 text-orange-600 hover:bg-orange-50' }}">
+            Asesoría
+        </a>
+    </div>
+</div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
             <!-- COLUMNA PRINCIPAL -->
             <div class="lg:col-span-2 space-y-12">
+<<<<<<< Updated upstream
 
                 <!-- MIEMBROS -->
                 <div id="miembros" class="bg-white rounded-3xl shadow-xl p-10">
@@ -187,6 +251,8 @@
                     </div>
                 </div>
 
+=======
+>>>>>>> Stashed changes
                 <!-- PROYECTO -->
                 <div id="proyecto" class="bg-white rounded-3xl shadow-xl p-10">
                     <h2 class="text-4xl font-black text-gray-900 mb-10">Información del proyecto</h2>
@@ -228,6 +294,7 @@
                         </div>
                     @endif
                 </div>
+<<<<<<< Updated upstream
 
                 <!-- AVANCES -->
                 <div id="avances" class="bg-white rounded-3xl shadow-xl p-10">
@@ -279,8 +346,10 @@
                         </div>
                     @endif
                 </div>
+=======
+>>>>>>> Stashed changes
             </div>
-
+            
             <!-- SIDEBAR DERECHA -->
             <div class="space-y-10">
                 <!-- INFORMACIÓN RÁPIDA -->
@@ -304,12 +373,13 @@
                         <div>
                             <p class="text-sm text-gray-600 font-bold uppercase">Días restantes</p>
                             <p class="text-4xl font-black text-orange-600">
-                                {{ now()->diffInDays($equipo->evento->fecha_fin) }}
+                                {{ (int) now()->diffInDays($equipo->evento->fecha_fin) }}
                             </p>
                         </div>
                     </div>
                 </div>
 
+<<<<<<< Updated upstream
                 <!-- CALIFICACIONES -->
                 @if($equipo->calificaciones->count() > 0 || $promedioCalificacion)
                     <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-3xl shadow-xl p-8 border-2 border-purple-200">
@@ -376,6 +446,8 @@
                     @endif
                 </div>
 
+=======
+>>>>>>> Stashed changes
                 <!-- PRÓXIMOS PASOS -->
                 <div class="bg-gradient-to-br from-purple-600 to-pink-600 rounded-3xl p-8 text-white">
                     <h3 class="text-2xl font-black mb-6">Próximos pasos</h3>

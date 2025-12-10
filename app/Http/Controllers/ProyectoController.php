@@ -7,27 +7,28 @@ use Illuminate\Http\Request;
 
 class ProyectoController extends Controller
 {
-    public function update(Request $request, Proyecto $proyecto)
+    public function store(Request $request, Equipo $equipo)
     {
-        $this->authorize('update', $proyecto->equipo);
+        $this->authorize('update', $equipo);
 
-        $request->validate([
-            'problema_resuelto' => 'required',
-            'solucion_propuesta' => 'required',
-            'impacto_social' => 'nullable|string',
+        $data = $request->validate([
+            'problema_resuelto' => 'required|string',
+            'solucion_propuesta' => 'required|string',
+            'tecnologias' => 'nullable|string',
             'github' => 'nullable|url',
             'demo' => 'nullable|url',
             'video_pitch' => 'nullable|url',
         ]);
 
-        $proyecto->update($request->only(['problema_resuelto', 'solucion_propuesta', 'impacto_social']));
+        $proyecto = $equipo->proyecto()->create($data);
 
-        $proyecto->repositorio()->updateOrCreate(
-            ['proyecto_id' => $proyecto->getKey()],
-            $request->only(['github', 'demo', 'video_pitch'])
-        );
+        $proyecto->repositorio()->create([
+            'github' => $request->github,
+            'demo' => $request->demo,
+            'video_pitch' => $request->video_pitch,
+        ]);
 
-        return redirect()->route('equipos.show', $proyecto->equipo)
-                        ->with('success', '¡Proyecto actualizado correctamente!');
+        return redirect()->route('equipos.proyecto', $equipo)
+            ->with('success', '¡Proyecto completado exitosamente!');
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Equipo;
 use App\Models\Proyecto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -9,17 +10,41 @@ use App\Mail\NuevoAvanceMail;
 
 class AvanceController extends Controller
 {
-    public function store(Request $request, Proyecto $proyecto)
+    /**
+     * Mostrar formulario para crear un nuevo avance
+     */
+    public function create(Equipo $equipo)
     {
-        $this->authorize('update', $proyecto->equipo);
+        $this->authorize('update', $equipo);
+
+        // Si no hay proyecto, redirigir con mensaje claro
+        if (!$equipo->proyecto) {
+            return redirect()->route('equipos.proyecto', $equipo)
+                ->with('error', 'Primero debes completar la información del proyecto');
+        }
+
+        return view('avances.create', compact('equipo'));
+    }
+
+    /**
+     * Guardar el nuevo avance + subir imágenes + enviar correo
+     */
+    public function store(Request $request, Equipo $equipo)
+    {
+        $this->authorize('update', $equipo);
+
+        if (!$equipo->proyecto) {
+            return back()->with('error', 'El proyecto no está definido');
+        }
 
         $request->validate([
-            'titulo' => 'required|string|max:255',
-            'descripcion' => 'required|string',
+            'titulo'            => 'required|string|max:255',
+            'descripcion'       => 'required|string',
             'porcentaje_avance' => 'required|integer|min:0|max:100',
-            'evidencias.*' => 'nullable|file|image|mimes:jpg,png,gif,webp,mp4|max:10240'
+            'evidencias.*'      => 'nullable|image|mimes:jpg,jpeg,png,webp,mp4|max:10240', // hasta 10MB
         ]);
 
+        // Guardar evidencias
         $evidencias = [];
         if ($request->hasFile('evidencias')) {
             foreach ($request->file('evidencias') as $file) {
@@ -27,30 +52,35 @@ class AvanceController extends Controller
             }
         }
 
-        $avance = $proyecto->avances()->create([
-            'user_id' => auth()->id(),
-            'titulo' => $request->titulo,
-            'descripcion' => $request->descripcion,
-            'evidencias' => $evidencias,
-            'porcentaje_avance' => $request->porcentaje_avance
+        // Crear el avance
+        $avance = $equipo->proyecto->avances()->create([
+            'user_id'           => auth()->id(),
+            'titulo'            => $request->titulo,
+            'descripcion'       => $request->descripcion,
+            'porcentaje_avance' => $request->porcentaje_avance,
+            'evidencias'        => $evidencias,
         ]);
 
-        // Enviar correo a todos los miembros del equipo (excepto quien lo publicó)
+        // Enviar notificación por correo a todos los miembros (excepto al autor)
         try {
-            $equipo = $proyecto->equipo;
-            $equipo->load('participantes.user');
-            
+            $equipo->loadMissing('participantes.user');
+
             foreach ($equipo->participantes as $participante) {
-                // No enviar correo al autor del avance
-                if ($participante->user && $participante->user->id !== auth()->id() && $participante->user->email) {
-                    Mail::to($participante->user->email)->send(new NuevoAvanceMail($avance));
+                if (
+                    $participante->user &&
+                    $participante->user->id !== auth()->id() &&
+                    $participante->user->email
+                ) {
+                    Mail::to($participante->user->email)->queue(new NuevoAvanceMail($avance));
                 }
             }
         } catch (\Exception $e) {
-            \Log::error('Error enviando correos de nuevo avance: ' . $e->getMessage());
+            \Log::warning('Error al enviar notificaciones de avance: ' . $e->getMessage());
+            // No rompemos el flujo si falla el correo
         }
 
-        return redirect()->route('equipos.show', $proyecto->equipo)
-                        ->with('success', '¡Avance publicado y equipo notificado!');
+        return redirect()
+            ->route('equipos.avances', $equipo)
+            ->with('success', '¡Avance publicado y equipo notificado!');
     }
 }

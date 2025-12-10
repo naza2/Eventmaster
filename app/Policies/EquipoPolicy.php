@@ -4,9 +4,11 @@ namespace App\Policies;
 
 use App\Models\Equipo;
 use App\Models\User;
+use Illuminate\Auth\Access\HandlesAuthorization;
 
 class EquipoPolicy
 {
+    use HandlesAuthorization;
     /**
      * Determine si el usuario puede crear un equipo
      */
@@ -19,34 +21,25 @@ class EquipoPolicy
     /**
      * Determine si el usuario puede invitar miembros al equipo
      */
-    public function invite(User $user, Equipo $equipo): bool
+    public function invite(User $user, Equipo $equipo)
     {
-        // Solo el líder del equipo puede invitar
-        return $equipo->participantes()
-            ->where('user_id', $user->id)
-            ->where('rol', 'lider')
-            ->exists();
+        return $this->update($user, $equipo); // Solo el líder puede invitar
     }
 
     /**
      * Determine si el usuario puede actualizar el equipo
      */
-    public function update(User $user, Equipo $equipo): bool
+    public function update(User $user, Equipo $equipo)
     {
-        // Solo el líder del equipo puede actualizar
         return $equipo->participantes()
             ->where('user_id', $user->id)
             ->where('rol', 'lider')
             ->exists();
     }
 
-    /**
-     * Determine si el usuario puede ver el equipo
-     */
-    public function view(User $user, Equipo $equipo): bool
+    public function view(User $user, Equipo $equipo)
     {
-        // Todos los usuarios autenticados pueden ver equipos
-        return true;
+        return $equipo->participantes()->where('user_id', $user->id)->exists();
     }
 
     /**

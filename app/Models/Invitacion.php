@@ -27,7 +27,7 @@ class Invitacion extends Model
         return $this->belongsTo(Equipo::class);
     }
 
-    public function invitante(): BelongsTo
+    public function invitante()
     {
         return $this->belongsTo(User::class, 'invitado_por');
     }
