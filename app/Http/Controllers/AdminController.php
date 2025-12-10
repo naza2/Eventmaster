@@ -201,14 +201,24 @@ class AdminController extends Controller
 
         // Sincronizar jueces asignados al evento
         if ($request->has('jueces')) {
-            // Eliminar jueces actuales
-            Juez::where('evento_id', $evento->id)->delete();
+            // Obtener jueces actuales del evento
+            $juecesActuales = Juez::where('evento_id', $evento->id)->pluck('user_id')->toArray();
+            $juecesNuevos = $request->jueces;
 
-            // Agregar nuevos jueces
-            foreach ($request->jueces as $juezId) {
-                Juez::create([
+            // Eliminar jueces que ya no están seleccionados
+            $juecesAEliminar = array_diff($juecesActuales, $juecesNuevos);
+            if (!empty($juecesAEliminar)) {
+                Juez::where('evento_id', $evento->id)
+                    ->whereIn('user_id', $juecesAEliminar)
+                    ->delete();
+            }
+
+            // Agregar solo los jueces nuevos que no existen
+            foreach ($juecesNuevos as $juezId) {
+                Juez::firstOrCreate([
                     'user_id' => $juezId,
                     'evento_id' => $evento->id,
+                ], [
                     'activo' => true,
                 ]);
             }
