@@ -81,7 +81,6 @@ class EquipoController extends Controller
             'calificaciones.criterio'
         ]);
 
-<<<<<<< Updated upstream
         // Verificar si este equipo es ganador
         $esGanador = $equipo->evento->ganadores->where('equipo_id', $equipo->id)->first();
 
@@ -89,9 +88,6 @@ class EquipoController extends Controller
         $promedioCalificacion = $equipo->calificaciones->avg('puntuacion');
 
         return view('equipos.show', compact('equipo', 'esGanador', 'promedioCalificacion'));
-=======
-        return view('equipos.show', compact('equipo'));
->>>>>>> Stashed changes
     }
 
     // PESTAÑAS REALES - Aquí están las 5 que querías
