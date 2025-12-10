@@ -5,7 +5,16 @@
 
 @section('content')
 <div class="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 py-12">
+
     <div class="max-w-4xl mx-auto px-6">
+
+        <a href="{{ route('admin.eventos.index') }}"
+               class="inline-flex items-center gap-3 px-8 py-4 bg-white/90 backdrop-blur-xl text-indigo-600 font-black text-xl rounded-2xl hover:bg-indigo-50 transition shadow-lg">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                </svg>
+                Volver
+            </a>
 
         <!-- Header -->
         <div class="text-center mb-12">
@@ -139,50 +148,71 @@
                     </div>
                 </div>
 
-                <!-- Selección de Jueces -->
-                <div class="border-t-2 border-purple-100 pt-8">
-                    <h3 class="text-2xl font-black text-gray-900 mb-6">Asignar Jueces al Evento</h3>
+                <!-- Selección de Jueces - FUNCIONA con URL y archivos locales -->
+<div class="border-t-2 border-purple-100 pt-8">
+    <h3 class="text-2xl font-black text-gray-900 mb-6">Asignar Jueces al Evento</h3>
 
-                    @if($jueces->count() > 0)
-                        <div x-data="{ selectedJueces: [] }" class="space-y-4">
-                            <p class="text-gray-600 mb-4">Selecciona los jueces que evaluarán este evento:</p>
+    @if($jueces->count() > 0)
+        <div x-data="{ selectedJueces: [] }" class="space-y-4">
+            <p class="text-gray-600 mb-4">Selecciona los jueces que evaluarán este evento:</p>
 
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-96 overflow-y-auto p-4 bg-gray-50 rounded-2xl">
-                                @foreach($jueces as $juez)
-                                    <label class="flex items-center space-x-4 p-4 bg-white rounded-xl border-2 border-gray-200 hover:border-purple-400 cursor-pointer transition-all hover:shadow-lg">
-                                        <input type="checkbox" name="jueces[]" value="{{ $juez->id }}"
-                                               class="w-5 h-5 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
-                                               {{ in_array($juez->id, old('jueces', [])) ? 'checked' : '' }}>
-                                        <div class="flex-1">
-                                            <div class="flex items-center space-x-3">
-                                                @if($juez->foto_perfil)
-                                                    <img src="{{ asset('storage/' . $juez->foto_perfil) }}"
-                                                         alt="{{ $juez->name }}"
-                                                         class="w-10 h-10 rounded-full object-cover">
-                                                @else
-                                                    <div class="w-10 h-10 rounded-full bg-gradient-to-r from-purple-400 to-pink-400 flex items-center justify-center">
-                                                        <span class="text-white font-bold text-sm">{{ substr($juez->name, 0, 1) }}</span>
-                                                    </div>
-                                                @endif
-                                                <div>
-                                                    <p class="font-bold text-gray-900">{{ $juez->name }}</p>
-                                                    @if($juez->especialidad)
-                                                        <p class="text-xs text-gray-500 capitalize">{{ str_replace('_', ' ', $juez->especialidad) }}</p>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </label>
-                                @endforeach
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-96 overflow-y-auto p-4 bg-gray-50 rounded-2xl">
+                @foreach($jueces as $juez)
+                    <label class="flex items-center space-x-4 p-4 bg-white rounded-xl border-2 border-gray-200 
+                                  hover:border-purple-400 cursor-pointer transition-all hover:shadow-lg">
+                        
+                        <input type="checkbox" 
+                               name="jueces[]" 
+                               value="{{ $juez->id }}"
+                               class="w-5 h-5 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                               {{ in_array($juez->id, old('jueces', [])) ? 'checked' : '' }}>
+
+                        <div class="flex-1 flex items-center space-x-4">
+                            <!-- FOTO: Soporta URL y archivos locales -->
+                            <div class="flex-shrink-0">
+                                @if($juez->foto_perfil)
+                                    @if(filter_var($juez->foto_perfil, FILTER_VALIDATE_URL))
+                                        <!-- Es una URL externa -->
+                                        <img src="{{ $juez->foto_perfil }}"
+                                             alt="{{ $juez->name }}"
+                                             class="w-12 h-12 rounded-full object-cover ring-4 ring-white shadow-lg">
+                                    @else
+                                        <!-- Es un archivo subido -->
+                                        <img src="{{ Storage::url($juez->foto_perfil) }}"
+                                             alt="{{ $juez->name }}"
+                                             class="w-12 h-12 rounded-full object-cover ring- ring-4 ring-white shadow-lg">
+                                    @endif
+                                @else
+                                    <!-- Sin foto: iniciales -->
+                                    <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full 
+                                                flex items-center justify-center text-white font-black text-lg shadow-lg">
+                                        {{ Str::upper(substr($juez->name, 0, 1)) }}
+                                    </div>
+                                @endif
+                            </div>
+
+                            <div>
+                                <p class="font-black text-gray-900 text-lg">{{ $juez->name }}</p>
+                                @if($juez->especialidad)
+                                    <p class="text-sm text-purple-600 font-medium capitalize">
+                                        {{ str_replace('_', ' ', $juez->especialidad) }}
+                                    </p>
+                                @else
+                                    <p class="text-xs text-gray-400 italic">Sin especialidad</p>
+                                @endif
                             </div>
                         </div>
-                    @else
-                        <div class="bg-yellow-50 border-2 border-yellow-200 rounded-2xl p-6">
-                            <p class="text-yellow-800 font-semibold">No hay jueces registrados en el sistema.</p>
-                            <p class="text-yellow-700 text-sm mt-2">Puedes crear jueces desde el panel de administración.</p>
-                        </div>
-                    @endif
-                </div>
+                    </label>
+                @endforeach
+            </div>
+        </div>
+    @else
+        <div class="bg-yellow-50 border-2 border-yellow-200 rounded-2xl p-6 text-center">
+            <p class="text-yellow-800 font-bold">No hay jueces disponibles</p>
+            <p class="text-yellow-700 text-sm mt-2">Invita a expertos para que evalúen los proyectos</p>
+        </div>
+    @endif
+</div>
 
                 <!-- Botones -->
                 <div class="pt-10 border-t-2 border-purple-100 flex flex-col sm:flex-row gap-6">

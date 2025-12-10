@@ -81,46 +81,142 @@
                         @enderror
                     </div>
 
-                    <!-- LOGO DEL EQUIPO -->
-                    <div>
-                        <label for="logo" class="block text-xl font-bold text-gray-800 mb-4">
-                            Logo del equipo (opcional)
-                        </label>
-                        <div class="border-4 border-dashed border-gray-300 rounded-3xl p-12 text-center hover:border-indigo-400 transition">
-                            <input type="file" name="logo" id="logo" accept="image/*"
-                                   class="hidden"
-                                   onchange="previewImage(event)">
-                            <label for="logo" class="cursor-pointer">
-                                <svg class="w-20 h-20 mx-auto text-gray-400 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
-                                </svg>
-                                </svg>
-                                <p class="text-xl font-bold text-gray-700">Haz clic para subir logo</p>
-                                <p class="text-gray-500 mt-2">PNG, JPG hasta 2MB</p>
-                            </label>
-                            <div id="preview" class="mt-6 hidden">
-                                <img id="preview-img" class="mx-auto max-h-48 rounded-2xl shadow-xl" src="" alt="Vista previa">
+                    <!-- LOGO DEL EQUIPO - Compacto, bonito y con URL + archivo -->
+                    <div class="mb-12">
+                        <h3 class="text-xl font-black text-gray-900 mb-6 text-center">
+                            Logo del equipo <span class="text-gray-500 font-normal">(opcional)</span>
+                        </h3>
+
+                        <div x-data="{ preview: '' }" class="max-w-md mx-auto">
+
+                            <!-- Vista previa pequeña -->
+                            <div class="flex justify-center mb-6">
+                                <div class="relative">
+                                    <div class="w-32 h-32 rounded-3xl overflow-hidden shadow-2xl ring-8 ring-purple-100 bg-gradient-to-br from-purple-200 to-pink-200">
+                                        <template x-if="preview">
+                                            <img :src="preview" alt="Logo del equipo" class="w-full h-full object-cover">
+                                        </template>
+                                        <template x-if="!preview">
+                                            <div class="w-full h-full flex items-center justify-center">
+                                                <svg class="w-16 h-16 text-white opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                                </svg>
+                                            </div>
+                                        </template>
+                                    </div>
+
+                                    <!-- Check si hay logo -->
+                                    <div x-show="preview" class="absolute -bottom-2 -right-2">
+                                        <div class="w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center shadow-xl">
+                                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
+
+                            <!-- Opciones en fila -->
+                            <div class="grid grid-cols-2 gap-4">
+
+                                <!-- Subir archivo -->
+                                <label class="cursor-pointer">
+                                    <input type="file"
+                                        name="logo"
+                                        accept="image/*"
+                                        class="hidden"
+                                        @change="let file = $event.target.files[0];
+                                                    if(file){
+                                                        let reader = new FileReader();
+                                                        reader.onload = (e) => preview = e.target.result;
+                                                        reader.readAsDataURL(file);
+                                                    }">
+                                    <div class="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 
+                                                text-white font-bold py-4 px-6 rounded-2xl text-center 
+                                                transition transform hover:scale-105 shadow-lg">
+                                        Subir logo
+                                    </div>
+                                </label>
+
+                                <!-- Pegar URL -->
+                                <div class="relative">
+                                    <input type="url"
+                                        name="logo_url"
+                                        placeholder="o pega una URL"
+                                        class="w-full pl-12 pr-4 py-4 text-sm rounded-2xl border-2 border-gray-200 
+                                                focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition"
+                                        @input.debounce.400ms="preview = $event.target.value"
+                                        value="{{ old('logo_url') }}">
+
+                                    <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" 
+                                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                            d="M13.828 10.172a4 4 0 00-5.656 0l-4 4 1.414 1.414L9.172 12 5.586 8.414 7 7l4 4 4-4 1.414 1.414-4 4z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                            d="M12 21.414l-6.414-6.414L7 13.586 12 18.586l5-5L18.414 15l-6.414 6.414z"/>
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <!-- Nota pequeña -->
+                            <p class="text-center mt-4 text-xs text-gray-500">
+                                PNG, JPG, WebP • Máx 2MB • Recomendado cuadrado
+                            </p>
+
+                            <!-- Errores -->
+                            @error('logo')
+                                <p class="text-center mt-3 text-red-600 font-medium text-sm">{{ $message }}</p>
+                            @enderror
+                            @error('logo_url')
+                                <p class="text-center mt-3 text-red-600 font-medium text-sm">{{ $message }}</p>
+                            @enderror
                         </div>
-                        @error('logo')
-                            <p class="mt-3 text-red-600 font-medium">{{ $message }}</p>
-                        @enderror
                     </div>
 
-                    <!-- INFORMACIÓN DEL LÍDER (automática) -->
-                    <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-3xl p-8 border border-indigo-100">
-                        <h3 class="text-2xl font-black text-gray-900 mb-6">Tú eres el líder del equipo</h3>
-                        <div class="flex items-center gap-6">
-                            <img src="{{ auth()->user()->foto_perfil ? Storage::url(auth()->user()->foto_perfil) : asset('images/avatar.svg') }}"
-                                 alt="{{ auth()->user()->name }}"
-                                 class="w-24 h-24 rounded-2xl object-cover ring-4 ring-white shadow-xl">
-                            <div>
-                                <p class="text-2xl font-bold text-gray-900">{{ auth()->user()->name }}</p>
-                                <p class="text-lg text-indigo-600 font-semibold">{{ auth()->user()->carrera?->nombre ?? 'Sin carrera' }}</p>
-                                <p class="text-gray-600">{{ auth()->user()->matricula }}</p>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- INFORMACIÓN DEL LÍDER (automática) - Soporta URL y local -->
+<div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-3xl p-8 border border-indigo-100">
+    <h3 class="text-2xl font-black text-gray-900 mb-6">Tú eres el líder del equipo</h3>
+    <div class="flex items-center gap-6">
+        
+        <!-- FOTO: Local o URL -->
+        <div class="relative flex-shrink-0">
+            @if(auth()->user()->foto_perfil)
+                <img src="{{ 
+                    filter_var(auth()->user()->foto_perfil, FILTER_VALIDATE_URL) 
+                        ? auth()->user()->foto_perfil 
+                        : Storage::url(auth()->user()->foto_perfil)
+                }}"
+                     alt="{{ auth()->user()->name }}"
+                     class="w-24 h-24 rounded-2xl object-cover ring-4 ring-white shadow-xl">
+            @else
+                <div class="w-24 h-24 rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-600 
+                            flex items-center justify-center text-white font-black text-3xl shadow-xl ring-4 ring-white">
+                    {{ Str::upper(substr(auth()->user()->name, 0, 1)) }}
+                </div>
+            @endif
+
+            <!-- Check de líder -->
+            <div class="absolute -bottom-2 -right-2">
+                <div class="w-10 h-10 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full 
+                            flex items-center justify-center shadow-xl">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Información del líder -->
+        <div>
+            <p class="text-2xl font-black text-gray-900">{{ auth()->user()->name }}</p>
+            <p class="text-lg text-indigo-600 font-semibold">
+                {{ auth()->user()->carrera?->nombre ?? 'Sin carrera' }}
+            </p>
+            <p class="text-gray-600 font-medium">{{ auth()->user()->matricula ?? 'Sin matrícula' }}</p>
+        </div>
+    </div>
+</div>
 
                     <!-- BOTONES -->
                     <div class="flex flex-col sm:flex-row gap-6 justify-center pt-10">
