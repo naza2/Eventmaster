@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Especialidad extends Model
 {
+    protected $table = 'especialidades'; // ← ESTA LÍNEA ES OBLIGATORIA
+
     protected $fillable = ['carrera_id', 'nombre', 'descripcion'];
 
     public function carrera(): BelongsTo

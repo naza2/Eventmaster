@@ -9,10 +9,12 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // Primero los roles y permisos
+        // Ejecutar seeders base
         $this->call([
             RolesAndPermissionsSeeder::class,
+            CarrerasSeeder::class,
             EventosSeeder::class,
+            EspecialidadesSeeder::class, // ← ESTE ES EL QUE FALTABA
         ]);
 
         // Crear un usuario administrador

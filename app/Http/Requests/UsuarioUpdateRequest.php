@@ -21,21 +21,38 @@ class UsuarioUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
-        $userId = $this->route('usuario'); // Asume que el parámetro de ruta se llama 'usuario'
+        // FIX: Si la ruta manda el modelo Usuario, extraemos el ID correctamente
+        $usuario = $this->route('usuario');
+        $userId = is_object($usuario) ? $usuario->id : $usuario;
 
         return [
             'name' => 'required|string|max:255',
+
+            // FIX: validación correcta de email único excepto el usuario actual
             'email' => 'required|email|unique:users,email,' . $userId,
+
             'password' => 'nullable|string|min:8|confirmed',
+
             'matricula' => 'nullable|string|max:20|unique:users,matricula,' . $userId,
+
             'telefono' => 'nullable|string|max:20',
+
             'carrera_id' => 'required|exists:carreras,id',
+
+            // FIX: roles como ARRAY DE STRINGS
             'roles' => 'required|array|min:1',
-            'roles.*' => 'exists:roles,name',
+
+            // FIX: ahora acepta nombres de roles (juez, participante, etc.)
+            'roles.*' => 'string|exists:roles,name',
+
             'fecha_nacimiento' => 'nullable|date|before:today',
+
             'sexo' => 'nullable|in:M,F,Otro',
+
             'verificado' => 'sometimes|boolean',
+
             'foto_perfil' => 'nullable|image|mimes:jpg,jpeg,png,webp,gif|max:5120',
+
             'foto_url' => 'nullable|url|starts_with:https://,http://',
         ];
     }
@@ -52,15 +69,22 @@ class UsuarioUpdateRequest extends FormRequest
             'email.required' => 'El correo electrónico es obligatorio.',
             'email.email' => 'El correo electrónico debe ser válido.',
             'email.unique' => 'Este correo electrónico ya está registrado.',
+
             'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
             'password.confirmed' => 'Las contraseñas no coinciden.',
+
             'matricula.unique' => 'Esta matrícula ya está registrada.',
+
             'carrera_id.required' => 'La carrera es obligatoria.',
             'carrera_id.exists' => 'La carrera seleccionada no es válida.',
+
             'roles.required' => 'Debe seleccionar al menos un rol.',
             'roles.min' => 'Debe seleccionar al menos un rol.',
+            'roles.*.exists' => 'Uno de los roles seleccionados no es válido.',
+
             'fecha_nacimiento.before' => 'La fecha de nacimiento debe ser anterior a hoy.',
             'sexo.in' => 'El sexo debe ser M, F u Otro.',
+
             'foto_perfil.image' => 'El archivo debe ser una imagen.',
             'foto_perfil.max' => 'La foto de perfil no puede ser mayor a 5MB.',
         ];

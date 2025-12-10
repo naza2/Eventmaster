@@ -33,28 +33,39 @@ class RolesAndPermissionsSeeder extends Seeder
             ]);
         }
 
+        // ADMIN
         $admin = Role::firstOrCreate([
             'name' => 'administrador',
             'guard_name' => $guard,
         ]);
         $admin->givePermissionTo(Permission::where('guard_name', $guard)->get());
 
+        // LÍDER DE EQUIPO
         $lider = Role::firstOrCreate([
             'name' => 'lider_equipo',
             'guard_name' => $guard,
         ]);
         $lider->givePermissionTo(['create-team', 'invite-members', 'view-events']);
 
+        // JUEZ
         $juez = Role::firstOrCreate([
             'name' => 'juez',
             'guard_name' => $guard,
         ]);
         $juez->givePermissionTo(['evaluate-projects', 'view-events']);
 
+        // USUARIO
         $usuario = Role::firstOrCreate([
             'name' => 'usuario',
             'guard_name' => $guard,
         ]);
         $usuario->givePermissionTo(['join-team', 'view-events']);
+
+        // PARTICIPANTE (ROL QUE FALTABA)
+        $participante = Role::firstOrCreate([
+            'name' => 'participante',
+            'guard_name' => $guard,
+        ]);
+        $participante->givePermissionTo(['view-events']);
     }
 }
