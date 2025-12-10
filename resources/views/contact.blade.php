@@ -77,7 +77,7 @@
                             </div>
                             <div>
                                 <h3 class="text-xl font-bold text-gray-900 mb-1">Telefono</h3>
-                                <p class="text-gray-600">+52 (123) 456-7890</p>
+                                <p class="text-gray-600">+52 951 745 09 72</p>
                             </div>
                         </div>
 
@@ -90,7 +90,7 @@
                             </div>
                             <div>
                                 <h3 class="text-xl font-bold text-gray-900 mb-1">Email</h3>
-                                <p class="text-gray-600">contacto@eventmaster.com</p>
+                                <p class="text-gray-600">contactoeventmaster@gmail.com</p>
                             </div>
                         </div>
 

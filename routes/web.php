@@ -17,36 +17,41 @@ use App\Http\Controllers\ConstanciaController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\InvitacionController;
 use App\Http\Controllers\EspecialidadController;
+use App\Http\Controllers\ContactController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| FORMULARIO DE CONTACTO
+|--------------------------------------------------------------------------
+*/
+
+// Vista del formulario
+Route::get('/contacto', function () {
+    return view('contact');
+})->name('contact');
+
+// Envío del formulario (usa el controlador REAL)
+Route::post('/contacto', [ContactController::class, 'store'])
+    ->name('contact.store');
+
 
 /*
 |--------------------------------------------------------------------------
 | PÁGINAS PÚBLICAS
 |--------------------------------------------------------------------------
 */
+
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::get('/contacto', function () {
-    return view('contact');
-})->name('contact');
-
-Route::post('/contacto', function (Request $request) {
-    $request->validate([
-        'nombre'  => 'required|string|max:255',
-        'email'   => 'required|email',
-        'asunto'  => 'required|string|max:255',
-    ]);
-
-    // Aquí puedes conectar con Mail, guardar en BD, etc.
-    return back()->with('success', '¡Mensaje enviado! Te responderemos pronto');
-})->name('contact.store');
 
 /*
 |--------------------------------------------------------------------------
 | AUTENTICACIÓN + DASHBOARD
 |--------------------------------------------------------------------------
 */
+
 Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/dashboard', function () {
@@ -87,12 +92,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | EVENTOS (públicos para todos los autenticados)
+    | EVENTOS
     |--------------------------------------------------------------------------
     */
     Route::get('/eventos', [EventController::class, 'index'])->name('eventos.index');
     Route::get('/eventos/{evento}', [EventController::class, 'show'])->name('eventos.show');
-    // Rutas para creación de eventos (solo administradores)
+
     Route::get('/dashboard/eventos/create', [EventController::class, 'create'])
         ->name('eventos.create')
         ->middleware('role:administrador');
@@ -103,7 +108,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | EQUIPOS Y PROYECTOS (solo usuarios autenticados)
+    | EQUIPOS Y PROYECTOS
     |--------------------------------------------------------------------------
     */
     Route::get('/equipos', [EquipoController::class, 'index'])->name('equipos.index');
@@ -131,15 +136,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | JUECES Y CALIFICACIONES (solo jueces o admin)
+    | JUECES Y CALIFICACIONES
     |--------------------------------------------------------------------------
     */
-    // Panel del juez
     Route::get('/juez/panel', [JuezPanelController::class, 'index'])
         ->name('juez.panel')
         ->middleware('role:juez');
 
-    // Calificaciones por criterios
     Route::get('/calificar/{equipo}', [CalificacionController::class, 'create'])
         ->name('calificar.create')
         ->middleware('can:calificar,equipo');
@@ -148,7 +151,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('calificar.store')
         ->middleware('can:calificar,equipo');
 
-    // Votación por puestos (1°, 2°, 3°)
     Route::get('/evento/{evento}/votar', [VotoController::class, 'create'])
         ->name('votos.create')
         ->middleware('role:juez');
@@ -158,9 +160,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('role:juez');
 
     /*
-    |-------------------------------------------------------------------------
-    | GANADORES Y CONSTANCIAS (solo admin)
-    |-------------------------------------------------------------------------
+    |--------------------------------------------------------------------------
+    | GANADORES Y CONSTANCIAS
+    |--------------------------------------------------------------------------
     */
     Route::get('/evento/{evento}/ganadores', [GanadorController::class, 'create'])
         ->name('ganadores.create')
@@ -175,27 +177,30 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('can:view,ganador');
 });
 
+
 /*
 |--------------------------------------------------------------------------
 | PANEL ADMINISTRATIVO
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'verified', 'role:administrador'])->prefix('admin')->name('admin.')->group(function () {
-    // Gestión de usuarios
-    Route::get('/usuarios', [AdminController::class, 'usuariosIndex'])->name('usuarios.index');
-    Route::get('/usuarios/crear', [AdminController::class, 'usuariosCreate'])->name('usuarios.create');
-    Route::post('/usuarios', [AdminController::class, 'usuariosStore'])->name('usuarios.store');
-    Route::get('/usuarios/{usuario}', [AdminController::class, 'usuariosShow'])->name('usuarios.show');
-    Route::get('/usuarios/{usuario}/editar', [AdminController::class, 'usuariosEdit'])->name('usuarios.edit');
-    Route::patch('/usuarios/{usuario}', [AdminController::class, 'usuariosUpdate'])->name('usuarios.update');
-    Route::delete('/usuarios/{usuario}', [AdminController::class, 'usuariosDestroy'])->name('usuarios.destroy');
+Route::middleware(['auth', 'verified', 'role:administrador'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
 
-    // Gestión de eventos
-    Route::get('/eventos', [AdminController::class, 'eventosIndex'])->name('eventos.index');
-    Route::get('/eventos/{evento}', [AdminController::class, 'eventosShow'])->name('eventos.show');
-    Route::get('/eventos/{evento}/editar', [AdminController::class, 'eventosEdit'])->name('eventos.edit');
-    Route::patch('/eventos/{evento}', [AdminController::class, 'eventosUpdate'])->name('eventos.update');
-    Route::delete('/eventos/{evento}', [AdminController::class, 'eventosDestroy'])->name('eventos.destroy');
-});
+        Route::get('/usuarios', [AdminController::class, 'usuariosIndex'])->name('usuarios.index');
+        Route::get('/usuarios/crear', [AdminController::class, 'usuariosCreate'])->name('usuarios.create');
+        Route::post('/usuarios', [AdminController::class, 'usuariosStore'])->name('usuarios.store');
+        Route::get('/usuarios/{usuario}', [AdminController::class, 'usuariosShow'])->name('usuarios.show');
+        Route::get('/usuarios/{usuario}/editar', [AdminController::class, 'usuariosEdit'])->name('usuarios.edit');
+        Route::patch('/usuarios/{usuario}', [AdminController::class, 'usuariosUpdate'])->name('usuarios.update');
+        Route::delete('/usuarios/{usuario}', [AdminController::class, 'usuariosDestroy'])->name('usuarios.destroy');
+
+        Route::get('/eventos', [AdminController::class, 'eventosIndex'])->name('eventos.index');
+        Route::get('/eventos/{evento}', [AdminController::class, 'eventosShow'])->name('eventos.show');
+        Route::get('/eventos/{evento}/editar', [AdminController::class, 'eventosEdit'])->name('eventos.edit');
+        Route::patch('/eventos/{evento}', [AdminController::class, 'eventosUpdate'])->name('eventos.update');
+        Route::delete('/eventos/{evento}', [AdminController::class, 'eventosDestroy'])->name('eventos.destroy');
+    });
 
 require __DIR__.'/auth.php';
