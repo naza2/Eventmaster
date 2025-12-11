@@ -149,6 +149,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/equipos/{equipo}', [EquipoController::class, 'show'])->name('equipos.show');
 
+    // Eliminar equipo (admin o líder)
+    Route::delete('/equipos/{equipo}', [EquipoController::class, 'destroy'])->name('equipos.destroy');
+
     Route::put('/proyecto/{proyecto}', [ProyectoController::class, 'update'])
         ->name('proyecto.update');
 

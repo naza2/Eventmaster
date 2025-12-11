@@ -125,4 +125,20 @@ class EquipoController extends Controller
         $equipo->load('asesorias.asesor');
         return view('equipos.asesoria', compact('equipo'));
     }
+
+    // Eliminar equipo (solo administradores)
+    public function destroy(Equipo $equipo)
+    {
+        $this->authorize('delete', $equipo);
+
+        $nombreEquipo = $equipo->nombre_equipo;
+        $evento = $equipo->evento;
+
+        // Eliminar equipo (cascade eliminará participantes, proyectos, etc.)
+        $equipo->delete();
+
+        return redirect()
+            ->route('admin.eventos.show', $evento)
+            ->with('success', "Equipo '{$nombreEquipo}' eliminado correctamente.");
+    }
 }

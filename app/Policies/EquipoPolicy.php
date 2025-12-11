@@ -9,13 +9,26 @@ use Illuminate\Auth\Access\HandlesAuthorization;
 class EquipoPolicy
 {
     use HandlesAuthorization;
+
+    /**
+     * Los administradores pueden hacer CUALQUIER cosa
+     */
+    public function before(User $user, string $ability): bool|null
+    {
+        if ($user->hasRole('administrador')) {
+            return true;
+        }
+
+        return null;
+    }
+
     /**
      * Determine si el usuario puede crear un equipo
      */
     public function create(User $user): bool
     {
-        // Solo usuarios con rol de líder de equipo pueden crear equipos
-        return $user->hasRole('lider_equipo') || $user->hasRole('administrador');
+        // Solo usuarios con rol de usuario (alumno) pueden crear equipos
+        return $user->hasRole('usuario');
     }
 
     /**
@@ -49,5 +62,17 @@ class EquipoPolicy
     {
         // Solo jueces del evento pueden calificar
         return $user->esJuezDe($equipo->evento);
+    }
+
+    /**
+     * Determine si el usuario puede eliminar el equipo
+     */
+    public function delete(User $user, Equipo $equipo): bool
+    {
+        // Solo el líder del equipo puede eliminarlo (o admin por el método before)
+        return $equipo->participantes()
+            ->where('user_id', $user->id)
+            ->where('es_lider', true)
+            ->exists();
     }
 }
