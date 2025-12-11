@@ -85,7 +85,7 @@ class EquipoController extends Controller
         $esGanador = $equipo->evento->ganadores->where('equipo_id', $equipo->id)->first();
 
         // Calcular promedio de calificaciones
-        $promedioCalificacion = $equipo->calificaciones->avg('puntuacion');
+        $promedioCalificacion = $equipo->calificaciones->avg('puntaje');
 
         return view('equipos.show', compact('equipo', 'esGanador', 'promedioCalificacion'));
     }

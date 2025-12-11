@@ -54,6 +54,99 @@
 
             <!-- Auth + Menú móvil -->
             <div class="flex items-center gap-4">
+                @auth
+                    <!-- Campana de Notificaciones -->
+                    @if(!auth()->user()->esJuez())
+                        <div x-data="{ openNotifications: false }" class="relative">
+                            <button @click="openNotifications = !openNotifications"
+                                    class="relative p-2 hover:bg-gray-100 rounded-full transition">
+                                <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                                </svg>
+                                @php
+                                    $notificacionesPendientes = auth()->user()->unreadNotifications->count();
+                                    $invitacionesPendientes = auth()->user()->invitacionesPendientes()->count();
+                                    $total = $notificacionesPendientes + $invitacionesPendientes;
+                                @endphp
+                                @if($total > 0)
+                                    <span class="absolute top-0 right-0 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                                        {{ $total > 9 ? '9+' : $total }}
+                                    </span>
+                                @endif
+                            </button>
+
+                            <!-- Panel de Notificaciones -->
+                            <div x-show="openNotifications"
+                                 @click.away="openNotifications = false"
+                                 x-transition
+                                 class="absolute right-0 mt-4 w-96 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden max-h-96 overflow-y-auto">
+                                <div class="px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-purple-50 to-pink-50">
+                                    <h3 class="font-black text-lg text-gray-900">Notificaciones</h3>
+                                    <p class="text-sm text-gray-600">{{ $total }} {{ $total == 1 ? 'pendiente' : 'pendientes' }}</p>
+                                </div>
+
+                                @if($total > 0)
+                                    <!-- Invitaciones Pendientes -->
+                                    @if($invitacionesPendientes > 0)
+                                        <a href="{{ route('invitaciones.index') }}"
+                                           class="block px-6 py-4 hover:bg-purple-50 transition border-b border-gray-100">
+                                            <div class="flex items-start gap-3">
+                                                <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                                    <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                                    </svg>
+                                                </div>
+                                                <div class="flex-1">
+                                                    <p class="font-bold text-gray-900">Invitaciones a equipos</p>
+                                                    <p class="text-sm text-gray-600">Tienes {{ $invitacionesPendientes }} {{ $invitacionesPendientes == 1 ? 'invitación' : 'invitaciones' }}</p>
+                                                </div>
+                                                <span class="w-6 h-6 bg-purple-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                                                    {{ $invitacionesPendientes }}
+                                                </span>
+                                            </div>
+                                        </a>
+                                    @endif
+
+                                    <!-- Notificaciones del Sistema -->
+                                    @foreach(auth()->user()->unreadNotifications->take(3) as $notification)
+                                        <div class="px-6 py-4 hover:bg-gray-50 transition border-b border-gray-100">
+                                            <div class="flex items-start gap-3">
+                                                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                    </svg>
+                                                </div>
+                                                <div class="flex-1">
+                                                    @if($notification->type === 'App\Notifications\InvitacionAceptadaNotification')
+                                                        <p class="font-bold text-gray-900">{{ $notification->data['invitado_nombre'] }} aceptó tu invitación</p>
+                                                        <p class="text-sm text-gray-600">{{ $notification->data['equipo_nombre'] }}</p>
+                                                    @else
+                                                        <p class="font-bold text-gray-900">{{ $notification->data['tipo'] ?? 'Notificación' }}</p>
+                                                        <p class="text-sm text-gray-600">{{ $notification->created_at->diffForHumans() }}</p>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+
+                                    @if($notificacionesPendientes > 3)
+                                        <div class="px-6 py-3 text-center bg-gray-50">
+                                            <p class="text-sm text-gray-600">Y {{ $notificacionesPendientes - 3 }} más...</p>
+                                        </div>
+                                    @endif
+                                @else
+                                    <div class="px-6 py-12 text-center">
+                                        <svg class="w-16 h-16 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
+                                        </svg>
+                                        <p class="text-gray-600 font-medium">No tienes notificaciones</p>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    @endif
+                @endauth
+
                 @guest
                     <div class="hidden md:flex items-center gap-4">
                         <a href="{{ route('login') }}" class="font-semibold hover:text-purple-600 transition">Iniciar sesión</a>

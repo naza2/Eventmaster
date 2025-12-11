@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\InvitacionEquipoMail;
 use App\Mail\InvitacionAceptadaMail;
 use App\Mail\InvitacionRechazadaMail;
+use App\Notifications\NuevaInvitacionNotification;
+use App\Notifications\InvitacionAceptadaNotification;
 
 class InvitacionController extends Controller
 {
@@ -22,7 +24,7 @@ class InvitacionController extends Controller
     {
         $invitaciones = Auth::user()
             ->invitacionesPendientes()
-            ->with(['equipo.evento', 'invitante.user'])
+            ->with(['equipo.evento', 'invitante'])
             ->latest()
             ->get();
 
@@ -101,8 +103,8 @@ class InvitacionController extends Controller
             'estado'        => 'pendiente',
         ]);
 
-        // Enviar correo en cola
-        Mail::to($invitado)->queue(new InvitacionEquipoMail($invitacion));
+        // Enviar notificación (email + base de datos)
+        $invitado->notify(new NuevaInvitacionNotification($invitacion));
 
         return back()->with('success', "¡Invitación enviada a {$invitado->name}!");
     }
@@ -133,11 +135,14 @@ class InvitacionController extends Controller
         // Añadir al equipo
         $equipo->participantes()->create([
             'user_id'     => Auth::id(),
-            'rol'          => 'miembro',
+            'carrera_id'  => Auth::user()->carrera_id,
+            'num_control' => Auth::user()->matricula,
+            'rol'         => 'miembro',
+            'es_lider'    => false,
         ]);
 
-        // Notificar al líder
-        Mail::to($invitacion->invitante)->queue(new InvitacionAceptadaMail($invitacion));
+        // Notificar al líder (email + base de datos)
+        $invitacion->invitante->notify(new InvitacionAceptadaNotification($invitacion));
 
         // Rechazar otras invitaciones del mismo evento automáticamente
         Invitacion::where('invitado_id', Auth::id())
