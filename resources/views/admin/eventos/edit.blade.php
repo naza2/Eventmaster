@@ -215,6 +215,84 @@
                         </div>
                     </div>
 
+                    <!-- Sección de Equipos Inscritos -->
+                    <div class="pt-10 border-t-2 border-purple-100">
+                        <h3 class="text-2xl font-black text-gray-900 mb-6">
+                            Equipos Inscritos ({{ $evento->equipos->count() }})
+                        </h3>
+
+                        @if($evento->equipos->count() > 0)
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                @foreach($evento->equipos as $equipo)
+                                    <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 border-2 border-gray-200">
+                                        <div class="flex items-start justify-between mb-4">
+                                            <div class="flex-1">
+                                                <h4 class="text-xl font-black text-gray-900 mb-1">
+                                                    {{ $equipo->nombre_equipo }}
+                                                </h4>
+                                                <p class="text-purple-600 font-bold">
+                                                    {{ $equipo->nombre_proyecto }}
+                                                </p>
+                                            </div>
+                                            @if($equipo->participantes->where('es_lider', true)->first())
+                                                <span class="px-3 py-1 bg-gradient-to-r from-yellow-400 to-amber-500 text-white font-bold text-xs rounded-full">
+                                                    LÍDER
+                                                </span>
+                                            @else
+                                                <span class="px-3 py-1 bg-red-500 text-white font-bold text-xs rounded-full">
+                                                    SIN LÍDER
+                                                </span>
+                                            @endif
+                                        </div>
+
+                                        <div class="space-y-2 mb-4">
+                                            <div class="flex justify-between text-sm">
+                                                <span class="text-gray-600">Miembros:</span>
+                                                <span class="font-bold text-indigo-600">
+                                                    {{ $equipo->participantes->count() }}/{{ $evento->max_miembros }}
+                                                </span>
+                                            </div>
+                                            <div class="flex justify-between text-sm">
+                                                <span class="text-gray-600">Estado:</span>
+                                                <span class="px-3 py-1 rounded-full text-xs font-bold
+                                                             {{ $equipo->estado === 'aprobado' ? 'bg-emerald-100 text-emerald-700' :
+                                                                ($equipo->estado === 'pendiente' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700') }}">
+                                                    {{ ucfirst($equipo->estado) }}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex gap-2 pt-4 border-t border-gray-200">
+                                            <a href="{{ route('equipos.show', $equipo) }}" target="_blank"
+                                               class="flex-1 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-lg text-center transition">
+                                                Ver Equipo
+                                            </a>
+
+                                            <form method="POST" action="{{ route('equipos.destroy', $equipo) }}"
+                                                  onsubmit="return confirm('¿Eliminar equipo {{ $equipo->nombre_equipo }}? No se puede deshacer.')"
+                                                  class="flex-1">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit"
+                                                        class="w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold text-sm rounded-lg transition">
+                                                    🗑️ Eliminar
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @else
+                            <div class="text-center py-12 bg-gray-50 rounded-2xl">
+                                <svg class="w-20 h-20 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                </svg>
+                                <p class="text-gray-600 font-bold text-lg">Aún no hay equipos inscritos</p>
+                                <p class="text-gray-500 text-sm mt-2">Los equipos aparecerán aquí cuando se inscriban al evento</p>
+                            </div>
+                        @endif
+                    </div>
+
 <div class="pt-10 border-t-2 border-purple-100 flex flex-col sm:flex-row gap-5">
     <button type="submit"
             class="flex-1 px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600
