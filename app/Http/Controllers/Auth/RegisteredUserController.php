@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Carrera;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -19,7 +20,8 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        return view('auth.register');
+        $carreras = Carrera::all();
+        return view('auth.register', compact('carreras'));
     }
 
     /**
@@ -34,6 +36,8 @@ class RegisteredUserController extends Controller
             'lastname' => ['nullable', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'carrera_id' => ['required', 'exists:carreras,id'],
+            'matricula' => ['required', 'string', 'max:20', 'unique:users,matricula'],
         ]);
 
         $fullName = $request->name . ($request->lastname ? ' ' . $request->lastname : '');
@@ -42,6 +46,8 @@ class RegisteredUserController extends Controller
             'name' => $fullName,
             'email' => strtolower($request->email),
             'password' => Hash::make($request->password),
+            'carrera_id' => $request->carrera_id,
+            'matricula' => $request->matricula,
         ]);
 
         // Asignar rol de participante por defecto

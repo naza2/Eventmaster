@@ -28,7 +28,7 @@ class EquipoPolicy
     public function create(User $user): bool
     {
         // Solo usuarios con rol de usuario (alumno) pueden crear equipos
-        return $user->hasRole('usuario');
+        return $user->hasRole('lider_equipo');
     }
 
     /**

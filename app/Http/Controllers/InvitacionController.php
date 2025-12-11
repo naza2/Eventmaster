@@ -39,7 +39,7 @@ class InvitacionController extends Controller
     $this->authorize('invite', $equipo);
 
     // 1. Obtener TODOS los usuarios con rol "usuario" (alumnos)
-    $query = User::role('usuario')
+    $query = User::role('participante')
         ->with(['carrera'])
         ->whereDoesntHave('participantes', function ($q) use ($equipo) {
             $q->where('equipo_id', $equipo->id);
@@ -75,7 +75,7 @@ class InvitacionController extends Controller
         $invitado = User::findOrFail($request->invitado_id);
 
         // Validaciones críticas
-        if (!$invitado->hasRole('usuario')) {
+        if (!$invitado->hasrole('participante')) {
             return back()->with('error', 'Solo puedes invitar a alumnos.');
         }
 
@@ -108,54 +108,121 @@ class InvitacionController extends Controller
 
         return back()->with('success', "¡Invitación enviada a {$invitado->name}!");
     }
+/**
+       * Aceptar invitación (paso 1: redirigir a selección de rol)
+       */
+      public function aceptar(Invitacion $invitacion)
+      {
+          if ($invitacion->invitado_id !== Auth::id()) {
+              abort(403);
+          }
 
-    /**
-     * Aceptar invitación
-     */
-    public function aceptar(Invitacion $invitacion)
-    {
-        if ($invitacion->invitado_id !== Auth::id()) {
-            abort(403);
-        }
+          if ($invitacion->estado !== 'pendiente') {
+              return back()->with('error', 'Esta invitación ya no es
+  válida.');
+          }
 
-        if ($invitacion->estado !== 'pendiente') {
-            return back()->with('error', 'Esta invitación ya no es válida.');
-        }
+          $equipo = $invitacion->equipo;
 
-        $equipo = $invitacion->equipo;
+          if ($equipo->participantes()->count() >=
+  $equipo->evento->max_miembros) {
+              $invitacion->update(['estado' => 'rechazada',
+  'respondida_en' => now()]);
+              return back()->with('error', 'El equipo ya está lleno.');
+          }
 
-        if ($equipo->participantes()->count() >= $equipo->evento->max_miembros) {
-            $invitacion->update(['estado' => 'rechazada', 'respondida_en' => now()]);
-            return back()->with('error', 'El equipo ya está lleno.');
-        }
+          // Redirigir al formulario de selección de rol
+          return redirect()->route('invitaciones.seleccionar-rol',
+  $invitacion);
+      }
 
-        // Aceptar invitación
-        $invitacion->update(['estado' => 'aceptada', 'respondida_en' => now()]);
+      /**
+       * Mostrar formulario para seleccionar rol en el equipo
+       */
+      public function seleccionarRol(Invitacion $invitacion)
+      {
+          if ($invitacion->invitado_id !== Auth::id()) {
+              abort(403);
+          }
 
-        // Añadir al equipo
-        $equipo->participantes()->create([
-            'user_id'     => Auth::id(),
-            'carrera_id'  => Auth::user()->carrera_id,
-            'num_control' => Auth::user()->matricula,
-            'rol'         => 'miembro',
-            'es_lider'    => false,
-        ]);
+          if ($invitacion->estado !== 'pendiente') {
+              return redirect()->route('invitaciones.index')
+                  ->with('error', 'Esta invitación ya no es válida.');
+          }
 
-        // Notificar al líder (email + base de datos)
-        $invitacion->invitante->notify(new InvitacionAceptadaNotification($invitacion));
+          $equipo = $invitacion->equipo;
 
-        // Rechazar otras invitaciones del mismo evento automáticamente
-        Invitacion::where('invitado_id', Auth::id())
-            ->whereHas('equipo', fn($q) => $q->where('evento_id', $equipo->evento_id))
-            ->where('id', '!=', $invitacion->id)
-            ->where('estado', 'pendiente')
-            ->update(['estado' => 'rechazada', 'respondida_en' => now()]);
+          if ($equipo->participantes()->count() >=
+  $equipo->evento->max_miembros) {
+              return redirect()->route('invitaciones.index')
+                  ->with('error', 'El equipo ya está lleno.');
+          }
 
-        return redirect()
-            ->route('equipos.show', $equipo)
-            ->with('success', "¡Bienvenido a {$equipo->nombre_equipo}!");
-    }
+          return view('invitaciones.seleccionar-rol',
+  compact('invitacion', 'equipo'));
+      }
 
+      /**
+       * Guardar el rol seleccionado y unirse al equipo
+       */
+      public function guardarRol(Request $request, Invitacion
+  $invitacion)
+      {
+          if ($invitacion->invitado_id !== Auth::id()) {
+              abort(403);
+          }
+
+          if ($invitacion->estado !== 'pendiente') {
+              return redirect()->route('invitaciones.index')
+                  ->with('error', 'Esta invitación ya no es válida.');
+          }
+
+          $request->validate([
+              'rol' => 'required|in:lider,programador,diseñador,analista
+  _negocios,analista_datos,otro',
+          ]);
+
+          $equipo = $invitacion->equipo;
+
+          if ($equipo->participantes()->count() >=
+  $equipo->evento->max_miembros) {
+              $invitacion->update(['estado' => 'rechazada',
+  'respondida_en' => now()]);
+              return redirect()->route('invitaciones.index')
+                  ->with('error', 'El equipo ya está lleno.');
+          }
+
+          // Aceptar invitación
+          $invitacion->update(['estado' => 'aceptada', 'respondida_en'
+  => now()]);
+
+          // Añadir al equipo con el rol seleccionado
+          $equipo->participantes()->create([
+              'user_id'     => Auth::id(),
+              'carrera_id'  => Auth::user()->carrera_id,
+              'num_control' => Auth::user()->matricula,
+              'rol'         => $request->rol,
+              'es_lider'    => false,
+          ]);
+
+          // Notificar al líder
+          $invitacion->invitante->notify(new
+  InvitacionAceptadaNotification($invitacion));
+
+          // Rechazar otras invitaciones del mismo evento automáticamente
+          Invitacion::where('invitado_id', Auth::id())
+              ->whereHas('equipo', fn($q) => $q->where('evento_id',
+  $equipo->evento_id))
+              ->where('id', '!=', $invitacion->id)
+              ->where('estado', 'pendiente')
+              ->update(['estado' => 'rechazada', 'respondida_en' =>
+  now()]);
+
+          return redirect()
+              ->route('equipos.show', $equipo)
+              ->with('success', "¡Bienvenido a
+  {$equipo->nombre_equipo}!");
+      }
     /**
      * Rechazar invitación
      */

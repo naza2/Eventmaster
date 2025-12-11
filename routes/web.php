@@ -87,6 +87,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('permission:invite-members');
     Route::post('/invitaciones/{invitacion}/aceptar', [InvitacionController::class, 'aceptar'])
         ->name('invitaciones.aceptar');
+         Route::get('/invitaciones/{invitacion}/seleccionar-rol',
+  [InvitacionController::class, 'seleccionarRol'])
+          ->name('invitaciones.seleccionar-rol');
+      Route::post('/invitaciones/{invitacion}/guardar-rol',
+  [InvitacionController::class, 'guardarRol'])
+          ->name('invitaciones.guardar-rol');
     Route::post('/invitaciones/{invitacion}/rechazar', [InvitacionController::class, 'rechazar'])
         ->name('invitaciones.rechazar');
 

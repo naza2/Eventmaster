@@ -51,6 +51,38 @@
                                 <x-input-error :messages="$errors->get('lastname')" class="mt-2" />
                             </div>
                         </div>
+                         <!-- Carrera y Matrícula -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+      <div>
+          <x-input-label for="carrera_id" :value="__('Carrera')"
+  class="font-semibold text-gray-700"/>
+          <select id="carrera_id" name="carrera_id" required
+                  class="mt-2 w-full rounded-2xl border-gray-300
+  focus:border-purple-500 focus:ring-purple-500 shadow-sm">
+              <option value="">Selecciona tu carrera</option>
+              @foreach($carreras as $carrera)
+                  <option value="{{ $carrera->id }}" {{
+  old('carrera_id') == $carrera->id ? 'selected' : '' }}>
+                      {{ $carrera->nombre }}
+                  </option>
+              @endforeach
+          </select>
+          <x-input-error :messages="$errors->get('carrera_id')"
+  class="mt-2" />
+      </div>
+
+      <div>
+          <x-input-label for="matricula" :value="__('Número de
+  Control')" class="font-semibold text-gray-700"/>
+          <x-text-input id="matricula" type="text" name="matricula"
+  :value="old('matricula')" required
+                        class="mt-2 w-full rounded-2xl border-gray-300
+  focus:border-purple-500 focus:ring-purple-500 shadow-sm"
+                        placeholder="20181234"/>
+          <x-input-error :messages="$errors->get('matricula')"
+  class="mt-2" />
+      </div>
+  </div>
 
                         <!-- Correo universitario con validación estricta -->
                         <div class="mb-6">
@@ -173,8 +205,8 @@ function passwordStrength() {
                                    required
                                    class="mt-1 h-5 w-5 text-purple-600 rounded-lg focus:ring-purple-500 border-gray-300 shadow-sm">
                             <label for="terms" class="ml-3 text-sm text-gray-600 leading-relaxed">
-                                Acepto los 
-                                <a href="#" class="text-purple-600 font-bold hover:underline">Términos de Servicio</a> y la 
+                                Acepto los
+                                <a href="#" class="text-purple-600 font-bold hover:underline">Términos de Servicio</a> y la
                                 <a href="#" class="text-purple-600 font-bold hover:underline">Política de Privacidad</a>
                             </label>
                         </div>
@@ -191,8 +223,8 @@ function passwordStrength() {
                         <!-- Login link -->
                         <div class="mt-8 text-center">
                             <p class="text-gray-600">
-                                ¿Ya tienes cuenta? 
-                                <a href="{{ route('login') }}" 
+                                ¿Ya tienes cuenta?
+                                <a href="{{ route('login') }}"
                                    class="font-bold text-purple-600 hover:text-purple-700 hover:underline transition">
                                     Inicia sesión aquí
                                 </a>

@@ -176,6 +176,10 @@
                                     <option value="finalizado" {{ old('estado', $evento->estado) === 'finalizado' ? 'selected' : '' }}>
                                         Finalizado
                                     </option>
+                                     <option value="calificacion" {{ old('estado', $evento->estado) ===
+  'calificacion' ? 'selected' : '' }}>
+      En calificación
+  </option>
                                 </select>
                             </div>
                         </div>
