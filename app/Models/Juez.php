@@ -8,9 +8,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Juez extends Model
 {
     protected $table = 'jueces';
-    protected $primaryKey = 'user_id';
-    public $incrementing = false;
-    protected $keyType = 'int';
     protected $fillable = ['user_id', 'evento_id', 'activo'];
 
     protected $casts = ['activo' => 'boolean'];

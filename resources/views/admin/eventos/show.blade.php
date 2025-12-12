@@ -7,6 +7,19 @@
 <div class="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 py-12">
     <div class="max-w-7xl mx-auto px-6">
 
+        @if(session('success'))
+            <div class="mb-8 bg-gradient-to-r from-green-100 to-emerald-100 border-l-8 border-green-500 rounded-2xl p-8 shadow-xl">
+                <div class="flex items-center gap-6">
+                    <svg class="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <div>
+                        <p class="text-2xl font-black text-green-800">{{ session('success') }}</p>
+                    </div>
+                </div>
+            </div>
+        @endif
+
         <!-- Header con banner PREMIUM -->
         <div class="relative h-96 rounded-3xl overflow-hidden shadow-2xl mb-12 ring-8 ring-white/50">
                 <img src="{{ 

@@ -46,7 +46,7 @@
                     </div>
                 @endif
 
-                <form action="{{ route('admin.eventos.update', $evento) }}" method="POST" enctype="multipart/form-data" class="space-y-12">
+                <form action="{{ route('admin.eventos.update', $evento) }}" method="POST" enctype="multipart/form-data" class="space-y-12" id="form-editar-evento">
                     @csrf
                     @method('PATCH')
 
@@ -299,14 +299,14 @@
 
 <div class="pt-10 border-t-2 border-purple-100 flex flex-col sm:flex-row gap-5">
     <button type="submit"
-            class="flex-1 px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600
-                   hover:from-indigo-700 hover:to-purple-700
+            class="flex-1 px-8 py-4 bg-gradient-to-r from-green-600 to-emerald-600
+                   hover:from-green-700 hover:to-emerald-700
                    text-white font-bold text-lg rounded-2xl
-                   shadow-xl hover:shadow-purple-500/40
+                   shadow-xl hover:shadow-green-500/40
                    transform hover:-translate-y-1
                    transition-all duration-300
                    flex items-center justify-center gap-3 group">
-        Guardar cambios
+        💾 GUARDAR CAMBIOS AHORA
         <svg class="w-6 h-6 group-hover:translate-x-2 transition-transform"
              fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>

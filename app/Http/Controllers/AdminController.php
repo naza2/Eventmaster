@@ -176,59 +176,76 @@ class AdminController extends Controller
 
     public function eventosUpdate(EventoUpdateRequest $request, Evento $evento)
     {
+        \Log::info('=== INICIO eventosUpdate ===');
+        \Log::info('Evento ID: ' . $evento->id);
+        \Log::info('Request data: ' . json_encode($request->all()));
 
-        $evento->update([
-            'nombre'       => $request->nombre,
-            'descripcion'  => $request->descripcion,
-            'fecha_inicio' => $request->fecha_inicio,
-            'fecha_fin'    => $request->fecha_fin,
-            'max_miembros' => $request->max_miembros,
-            'estado'       => $request->estado,
-        ]);
+        try {
+            // Actualizar datos básicos del evento
+            $evento->update([
+                'nombre'       => $request->nombre,
+                'descripcion'  => $request->descripcion,
+                'fecha_inicio' => $request->fecha_inicio,
+                'fecha_fin'    => $request->fecha_fin,
+                'max_miembros' => $request->max_miembros,
+                'estado'       => $request->estado,
+            ]);
 
-        if ($request->hasFile('banner')) {
-            if ($evento->banner && !filter_var($evento->banner, FILTER_VALIDATE_URL)) {
-                Storage::disk('public')->delete($evento->banner);
-            }
-            $path = $request->file('banner')->store('event_banners', 'public');
-            $evento->banner = $path;
-        }
-        elseif ($request->filled('banner_url')) {
-            $evento->banner = $request->banner_url;
-        }
-
-        $evento->save();
-
-        // Sincronizar jueces asignados al evento
-        if ($request->has('jueces')) {
-            // Obtener jueces actuales del evento
-            $juecesActuales = Juez::where('evento_id', $evento->id)->pluck('user_id')->toArray();
-            $juecesNuevos = $request->jueces;
-
-            // Eliminar jueces que ya no están seleccionados
-            $juecesAEliminar = array_diff($juecesActuales, $juecesNuevos);
-            if (!empty($juecesAEliminar)) {
-                Juez::where('evento_id', $evento->id)
-                    ->whereIn('user_id', $juecesAEliminar)
-                    ->delete();
+            // Manejar el banner
+            if ($request->hasFile('banner')) {
+                // Eliminar banner anterior si existe y no es URL
+                if ($evento->banner && !filter_var($evento->banner, FILTER_VALIDATE_URL)) {
+                    Storage::disk('public')->delete($evento->banner);
+                }
+                $path = $request->file('banner')->store('event_banners', 'public');
+                $evento->banner = $path;
+                $evento->save();
+            } elseif ($request->filled('banner_url')) {
+                // Si se proporciona URL, eliminar archivo anterior
+                if ($evento->banner && !filter_var($evento->banner, FILTER_VALIDATE_URL)) {
+                    Storage::disk('public')->delete($evento->banner);
+                }
+                $evento->banner = $request->banner_url;
+                $evento->save();
             }
 
-            // Agregar solo los jueces nuevos que no existen
-            foreach ($juecesNuevos as $juezId) {
-                Juez::firstOrCreate([
-                    'user_id' => $juezId,
-                    'evento_id' => $evento->id,
-                ], [
-                    'activo' => true,
-                ]);
-            }
-        } else {
-            // Si no se enviaron jueces, eliminar todos
-            Juez::where('evento_id', $evento->id)->delete();
-        }
+            // Sincronizar jueces asignados al evento
+            if ($request->has('jueces') && is_array($request->jueces)) {
+                // Obtener jueces actuales del evento
+                $juecesActuales = Juez::where('evento_id', $evento->id)->pluck('user_id')->toArray();
+                $juecesNuevos = $request->jueces;
 
-        return redirect()->route('admin.eventos.show', $evento)
-            ->with('success', 'Evento actualizado correctamente');
+                // Eliminar jueces que ya no están seleccionados
+                $juecesAEliminar = array_diff($juecesActuales, $juecesNuevos);
+                if (!empty($juecesAEliminar)) {
+                    Juez::where('evento_id', $evento->id)
+                        ->whereIn('user_id', $juecesAEliminar)
+                        ->delete();
+                }
+
+                // Agregar solo los jueces nuevos que no existen
+                foreach ($juecesNuevos as $juezId) {
+                    Juez::firstOrCreate([
+                        'user_id' => $juezId,
+                        'evento_id' => $evento->id,
+                    ], [
+                        'activo' => true,
+                    ]);
+                }
+            } else {
+                // Si no se enviaron jueces, eliminar todos
+                Juez::where('evento_id', $evento->id)->delete();
+            }
+
+            return redirect()->route('admin.eventos.show', $evento)
+                ->with('success', 'Evento actualizado correctamente');
+
+        } catch (\Exception $e) {
+            \Log::error('Error al actualizar evento: ' . $e->getMessage());
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['error' => 'Error al actualizar el evento: ' . $e->getMessage()]);
+        }
     }
 
     public function eventosDestroy(Evento $evento)
