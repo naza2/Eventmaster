@@ -133,7 +133,9 @@
 
     <!-- CONTENIDO -->
     <main class="flex-1">
-        {{ $slot }}
+        @isset($slot)
+            {{ $slot }}
+        @endisset
     </main>
 
     <!-- BOTÓN VOLVER ARRIBA -->

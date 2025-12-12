@@ -23,45 +23,34 @@ class EquipoPolicy
     }
 
     /**
-     * Determine si el usuario puede crear un equipo
-     */
-    public function create(User $user): bool
-    {
-        // Solo usuarios con rol de usuario (alumno) pueden crear equipos
-        return $user->hasRole('lider_equipo');
-    }
-
-    /**
-     * Determine si el usuario puede invitar miembros al equipo
-     */
-    public function invite(User $user, Equipo $equipo)
-    {
-        return $this->update($user, $equipo); // Solo el líder puede invitar
-    }
-
-    /**
      * Determine si el usuario puede actualizar el equipo
      */
-    public function update(User $user, Equipo $equipo)
+    public function update(User $user, Equipo $equipo): bool
+    {
+        \Log::info('EquipoPolicy@update', [
+            'user_id' => $user->id,
+            'equipo_id' => $equipo->id,
+            'participantes' => $equipo->participantes()->get()->toArray(),
+        ]);
+
+        $esLider = $equipo->participantes()
+            ->where('user_id', $user->id)
+            ->where('es_lider', true)
+            ->exists();
+
+        \Log::info('¿Es líder?', ['resultado' => $esLider]);
+
+        return $esLider;
+    }
+
+    /**
+     * Determine si el usuario puede ver el equipo
+     */
+    public function view(User $user, Equipo $equipo): bool
     {
         return $equipo->participantes()
             ->where('user_id', $user->id)
-            ->where('rol', 'lider')
             ->exists();
-    }
-
-    public function view(User $user, Equipo $equipo)
-    {
-        return $equipo->participantes()->where('user_id', $user->id)->exists();
-    }
-
-    /**
-     * Determine si el usuario puede calificar el equipo
-     */
-    public function calificar(User $user, Equipo $equipo): bool
-    {
-        // Solo jueces del evento pueden calificar
-        return $user->esJuezDe($equipo->evento);
     }
 
     /**
@@ -69,10 +58,33 @@ class EquipoPolicy
      */
     public function delete(User $user, Equipo $equipo): bool
     {
-        // Solo el líder del equipo puede eliminarlo (o admin por el método before)
         return $equipo->participantes()
             ->where('user_id', $user->id)
             ->where('es_lider', true)
             ->exists();
+    }
+
+    /**
+     * Determine si el usuario puede crear un equipo
+     */
+    public function create(User $user): bool
+    {
+        return $user->hasRole('lider_equipo');
+    }
+
+    /**
+     * Determine si el usuario puede invitar miembros al equipo
+     */
+    public function invite(User $user, Equipo $equipo): bool
+    {
+        return $this->update($user, $equipo);
+    }
+
+    /**
+     * Determine si el usuario puede calificar el equipo
+     */
+    public function calificar(User $user, Equipo $equipo): bool
+    {
+        return $user->hasRole('juez');
     }
 }

@@ -87,12 +87,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('permission:invite-members');
     Route::post('/invitaciones/{invitacion}/aceptar', [InvitacionController::class, 'aceptar'])
         ->name('invitaciones.aceptar');
-         Route::get('/invitaciones/{invitacion}/seleccionar-rol',
-  [InvitacionController::class, 'seleccionarRol'])
-          ->name('invitaciones.seleccionar-rol');
-      Route::post('/invitaciones/{invitacion}/guardar-rol',
-  [InvitacionController::class, 'guardarRol'])
-          ->name('invitaciones.guardar-rol');
+    Route::get(
+        '/invitaciones/{invitacion}/seleccionar-rol',
+        [InvitacionController::class, 'seleccionarRol']
+    )
+        ->name('invitaciones.seleccionar-rol');
+    Route::post(
+        '/invitaciones/{invitacion}/guardar-rol',
+        [InvitacionController::class, 'guardarRol']
+    )
+        ->name('invitaciones.guardar-rol');
     Route::post('/invitaciones/{invitacion}/rechazar', [InvitacionController::class, 'rechazar'])
         ->name('invitaciones.rechazar');
 
@@ -125,17 +129,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::prefix('equipos/{equipo}')->name('equipos.')->group(function () {
-        Route::get('/miembros',    [EquipoController::class, 'miembros'])->name('miembros');
-        Route::get('/proyecto',    [EquipoController::class, 'proyecto'])->name('proyecto');
-        Route::get('/avances',     [EquipoController::class, 'avances'])->name('avances');
+        Route::get('/miembros', [EquipoController::class, 'miembros'])->name('miembros');
+        Route::get('/proyecto', [EquipoController::class, 'proyecto'])->name('proyecto');
+        Route::get('/avances', [EquipoController::class, 'avances'])->name('avances');
         Route::get('/repositorio', [EquipoController::class, 'repositorio'])->name('repositorio');
-        Route::get('/asesoria',    [EquipoController::class, 'asesoria'])->name('asesoria');
+        Route::get('/asesoria', [EquipoController::class, 'asesoria'])->name('asesoria');
     });
 
     // RUTAS DEL PROYECTO (dentro del grupo auth)
     Route::prefix('equipos/{equipo}')->name('proyecto.')->group(function () {
         // Crear proyecto (cuando aún no existe)
-        Route::get('/proyecto/create', [ProyectoController::class, 'create'])
+        Route::get('proyecto/create', [ProyectoController::class, 'create'])
             ->name('create')
             ->middleware('can:update,equipo');
 
@@ -166,6 +170,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('/equipos/{equipo}/miembros', [ParticipanteController::class, 'store'])
         ->name('miembros.store');
+
+
+    Route::delete('/equipos/{equipo}/miembros/{participante}', [ParticipanteController::class, 'destroy'])
+        ->name('participantes.destroy');
 
     Route::post('/equipos/{equipo}/asesoria', [AsesoriaController::class, 'solicitar'])
         ->name('asesoria.solicitar');
@@ -245,4 +253,4 @@ Route::middleware(['auth', 'verified', 'role:administrador'])
         Route::delete('/eventos/{evento}', [AdminController::class, 'eventosDestroy'])->name('eventos.destroy');
     });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
